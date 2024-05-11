@@ -82,13 +82,13 @@ data %>%
 # none
 
 # Standardization (Z-score scaling) -> Apply to continuous numeric non-categorical data
-numeric_cols_to_scale <- names(data)[sapply(data, is.numeric) & !names(data) %in% c("BlockNumber", "HourOfDay", "DayOfWeek")]
+numeric_cols_to_scale <- names(data)[sapply(data, is.numeric) & !names(data) %in% c("TotalTransactions", "BlockNumber", "HourOfDay", "DayOfWeek")]
 data_scaled <- data %>%
   mutate(across(all_of(numeric_cols_to_scale), scale))
 
 # Boxplot after scaling
 data_scaled %>%
-  select(where(function(x) is.numeric(x)), -c(BlockNumber, HourOfDay, DayOfWeek)) %>%  # Select only numeric columns
+  select(where(function(x) is.numeric(x)), -c(TotalTransactions, BlockNumber, HourOfDay, DayOfWeek)) %>%  # Select only numeric columns
   pivot_longer(cols = everything(), names_to = "Variable", values_to = "Value") %>%  # Reshape data
   ggplot(aes(x = "", y = Value)) +  # Setup axes
   geom_boxplot() +  # Create boxplots
