@@ -18,43 +18,17 @@ library(zoo)
 data <- read.csv("/Users/github/bitcoin-transactions-per-block/data/raw/block_data.csv")
 
 #####################
-# 1.Data Formatting #
+# 0. PRE-FORMATTING #
 #####################
-
-# FORMATTING
 
 # Convert the 'Date' column to POSIXct date-time objects
 data$Date <- as.POSIXct(data$Date, origin="1970-01-01", tz="UTC")
 
-# DETECTING INCONSISTENCIES
-
-summary(data)
-# none
-
-# ADDING NEW COLUMNS
-
-## Ensure data is sorted by the 'Date' column
-data <- data %>%
-  arrange(Date)
-## Calculate the time difference in minutes between consecutive blocks
-data <- data %>%
-  mutate(TimeDiffMinutes = c(NA, diff(Date) / 60))  # 'diff' calculates the difference between consecutive elements
-## Hour of the day
-data$HourOfDay <- hour(data$Date)
-## Day of the week
-# Returns numbers where 1 = Sunday, 2 = Monday, ..., 7 = Saturday
-data$DayOfWeek <- wday(data$Date) 
-## Whether the day is a weekday or weekend
-data$IsWeekend <- ifelse(data$DayOfWeek %in% c(1, 7), 1, 0)
-
-# View the updated dataframe to confirm changes
-summary(data)
-
 ##################
-# 2.Missing Data #
+# 1.Missing Data #
 ##################
 
-# IDENTIFYING MISSING DATA
+# IDENTIFYING MISSING DATA & INCONSISTENCIES
 
 summary(data)
 
@@ -64,7 +38,7 @@ summary(data)
 # Strategy: Deletion
 data <- data[-1,]
 
-# 28 blocks with missing AverageFee.  
+# AverageFee: 28 blocks with missing values.  
 # These are blocks with only 1 tx, the coinbase tx which doesn't have any fee
 missing_averageFee_rows <- data[is.na(data$AverageFee), ]
 print(missing_averageFee_rows) 
@@ -72,7 +46,7 @@ print(missing_averageFee_rows)
 data$AverageFee <- ifelse(is.na(data$AverageFee), 0, data$AverageFee)
 
 ##############
-# 3.Outliers #
+# 2.Outliers #
 ##############
 
 # DETECTION
@@ -96,7 +70,7 @@ data %>%
 #   filter(numeric_column >= (quantiles[1] - 1.5 * iqr) & numeric_column <= (quantiles[2] + 1.5 * iqr))
 
 #########################
-# 4.Feature Engineering #
+# 3.Feature Engineering #
 #########################
 
 # TEMPORAL FEATURES
@@ -104,6 +78,18 @@ data %>%
 # Ensure data is sorted by the 'Date' column
 data <- data %>%
   arrange(Date)
+
+## Calculate the time difference in minutes between consecutive blocks
+data <- data %>%
+  mutate(TimeDiffMinutes = c(NA, diff(Date) / 60))  # 'diff' calculates the difference between consecutive elements
+## Hour of the day
+data$HourOfDay <- hour(data$Date)
+## Day of the week
+# Returns numbers where 1 = Sunday, 2 = Monday, ..., 7 = Saturday
+data$DayOfWeek <- wday(data$Date) 
+## Whether the day is a weekday or weekend
+data$IsWeekend <- ifelse(data$DayOfWeek %in% c(1, 7), 1, 0)
+
 # Create lagged features to retrieve the value of the previous block
 data$TotalTransactions_Lag1 <- dplyr::lag(data$TotalTransactions, 1)
 data$BlockSize_Lag1 <- dplyr::lag(data$BlockSize, 1)
@@ -182,7 +168,7 @@ ggplot(data, aes(x = BlockSize_Cubed, y = TotalTransactions)) +
        y = "Total Transactions")
 
 ##########################
-# 5.Scaling and Encoding #
+# 4.Scaling and Encoding #
 ##########################
 
 # STANDARDIZATION (Z-SCORE SCALING) (Apply to continuous numeric non-categorical variables)
@@ -235,14 +221,15 @@ data_encoded_onehot$day_cos <- cos(2 * pi * data_encoded_onehot$DayOfWeek / 7)
 data_encoded <- data_encoded_onehot
 head(data_encoded)
 
-############################
-# DIMENSIONALITY REDUCTION #
-############################
+#######################
+# DIMENSION REDUCTION #
+#######################
 
 # none
+# PCA, Heatmaps, t-SNE plots, Multidimensional Scaling (MDS) plots
 
 ###########################
-# 6.Data Integrity Checks #
+# 5.Data Integrity Checks #
 ###########################
 
 # DUPLICATES
@@ -255,7 +242,7 @@ data_processed <- data_encoded %>% distinct()
 summary(data_processed)
 
 ####################
-# 7.Data Splitting #
+# 6.Data Splitting #
 ####################
 
 set.seed(123)  # for reproducibility
