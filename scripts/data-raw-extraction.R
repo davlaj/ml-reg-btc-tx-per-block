@@ -1,6 +1,5 @@
-library(httr)
-library(jsonlite)
-library(lubridate)
+# Load packages
+source("setup-packages.R")  
 
 # Helper function to make JSON-RPC requests
 make_rpc_call <- function(url, method, params = list(), rpc_username, rpc_password) {
@@ -60,8 +59,8 @@ extract_data <- function() {
   
   if (length(blocks) > 0) {
     df <- do.call(rbind.data.frame, blocks)
-    write.csv(df, "/Users/github/bitcoin-transactions-per-block/data/raw/block_data.csv", row.names = FALSE)
-    print("CSV file saved to /Users/github/bitcoin-transactions-per-block/data/raw/block_data.csv")
+    write.csv(df, "/data/raw/block_data.csv", row.names = FALSE)
+    print("CSV file saved to /data/raw/block_data.csv")
   } else {
     print("No blocks processed.")
   }

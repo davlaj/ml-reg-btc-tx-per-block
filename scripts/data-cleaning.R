@@ -1,23 +1,8 @@
-# # Install packages if they are not already installed
-# if (!require("dplyr")) install.packages("dplyr")
-# if (!require("ggplot2")) install.packages("ggplot2")
-# if (!require("tidyr")) install.packages("tidyr")
-# if (!require("lubridate")) install.packages("lubridate", dependencies=TRUE)
-# if (!require("purrr")) install.packages("purrr")
-# if (!require("zoo")) install.packages("zoo")
-# if (!require("gridExtra")) install.packages("gridExtra")
-# 
-# # Load packages
-# library(dplyr)
-# library(ggplot2)
-# library(tidyr)
-# library(lubridate)
-# library(purrr)
-# library(zoo)
-# library(gridExtra)
+# Load packages
+source("setup-packages.R")
 
 # Load data 
-raw_data <- read.csv("/Users/github/bitcoin-transactions-per-block/data/raw/block_data.csv")
+raw_data <- read.csv("/data/raw/block_data.csv")
 
 #####################
 # 0. PRE-FORMATTING #
@@ -89,7 +74,7 @@ data_outliers <- function (input_data){
     labs(y = "Values", title = "Separate Boxplot for Each Numeric Variable")  # Label the y-axis and provide a title
   
   # Save the plot to a file
-  ggsave("/Users/github/bitcoin-transactions-per-block/output/data-cleaning/outliers-boxplot.pdf", plot, width = 10, height = 8)
+  ggsave("/data-cleaning/outliers-boxplot.pdf", plot, width = 10, height = 8)
   
   # TREATMENT (Trimming, Capping)
   

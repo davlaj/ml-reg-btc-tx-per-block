@@ -1,1 +1,3 @@
-When sharing the project (e.g., on GitHub), include an instruction in the README file that users should open the R project file to ensure paths are correctly set
+Include an instruction that users should open the R project file to ensure paths are correctly set
+
+Document the required packages and potentially the required versions in your project's README or in a setup script
