@@ -17,16 +17,16 @@ training_rows <- createTimeSlices(
 
 # The output of createTimeSlices is a list of indices for training sets ($train)
 # [[1]] corresponds to the indices of the first fold's training data
-train_data <- data[training_rows[[1]], ]
-test_data <- data[-training_rows[[1]], ]
+train_set <- data[training_rows[[1]], ]
+test_set <- data[-training_rows[[1]], ]
 
 # # Data splitting
 # train_indices <- sample(1:nrow(data_processed), 0.7 * nrow(data_processed))
-# train_data <- data_processed[train_indices, ]
-# test_data <- data_processed[-train_indices, ]
+# train_set <- data_processed[train_indices, ]
+# test_set <- data_processed[-train_indices, ]
 
 #########################
-# 2.DIMENSION REDUCTION #
+# 2.Dimension Reduction #
 #########################
 
 # PCA, Heatmaps, t-SNE plots, Multidimensional Scaling (MDS) plots
@@ -35,7 +35,10 @@ test_data <- data[-training_rows[[1]], ]
 # 3.Scaling # Apply to continuous numeric non-categorical variables
 #############
 
-# STANDARDIZATION (Z-SCORE SCALING)
+# NORMALIZATION = (x-xmin)/(xmax-xmin)
+# no
+
+# STANDARDIZATION (Z-SCORE SCALING = (x-mu)/sd )
 
 numeric_cols_to_scale <- names(data)[sapply(data, is.numeric) & !names(data) %in% c("TotalTransactions", "BlockNumber", "HourOfDay", "DayOfWeek", "IsWeekend")]
 data_scaled <- data %>%
@@ -54,10 +57,17 @@ data_scaled %>%
 summary(data_scaled)
 
 #######################
-# 4. MODEL EVALUATION #
+# 4. Model Evaluation #
 #######################
 
+# Graph scatter plot at this stage to include predictors that respect the 5 linear regression assumptions
+# in order to choose inputs for GLM?
 
+# Implement automatic backward elimination function
+
+# lm() -> does it really handle itself scaling?
+# lm() also takes care of categorical onehot encoding and creates dummy variables. 
+# We only have to  define the categorical variable as factor and the function will understand how to handle it
 
 
 

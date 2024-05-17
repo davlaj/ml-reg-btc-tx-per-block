@@ -59,8 +59,8 @@ extract_data <- function() {
   
   if (length(blocks) > 0) {
     df <- do.call(rbind.data.frame, blocks)
-    write.csv(df, "/data/raw/block_data.csv", row.names = FALSE)
-    print("CSV file saved to /data/raw/block_data.csv")
+    write.csv(df, "data/raw/block_data.csv", row.names = FALSE)
+    print("CSV file saved to data/raw/block_data.csv")
   } else {
     print("No blocks processed.")
   }

@@ -2,11 +2,17 @@
 source("setup-packages.R")
 
 # Load data 
-raw_data <- read.csv("/data/raw/block_data.csv")
+raw_data <- read.csv("data/raw/block_data.csv")
 
 #####################
-# 0. PRE-FORMATTING #
+# 0. Pre-Formatting #
 #####################
+
+# Handling missing values (e.g., filling in, imputing, or removing missing data)
+# Removing duplicates
+# Correcting errors and inconsistencies (e.g., fixing typos, standardizing formats)
+# Filtering out outliers or irrelevant data
+# Ensuring data types are correct (e.g., converting strings to integers)
 
 data_formatting <- function (input_file){
   
@@ -17,9 +23,9 @@ data_formatting <- function (input_file){
 }
 #formatted_data <- data_formatting(raw_data)
 
-##################
-# 1.Missing Data #
-##################
+####################
+# 1.Missing Values #
+####################
 
 data_missing_values <- function (input_data){
   
@@ -38,55 +44,101 @@ data_missing_values <- function (input_data){
   # These are blocks with only 1 tx, the coinbase tx which doesn't have any fee
   missing_averageFee_rows <- data[is.na(data$AverageFee), ]
   
-  
-  
-  
   print(missing_averageFee_rows) 
-  
-  
-  
   
   # Strategy: Imputation -> Replace by 0
   data$AverageFee <- ifelse(is.na(data$AverageFee), 0, data$AverageFee)
   
   return(data)
 }
-#data_with_no_missing_values <- data_missing_values(formatted_data)
+data_with_no_missing_values <- data_missing_values(formatted_data)
 
 ##############
 # 2.Outliers #
 ##############
 
-data_outliers <- function (input_data){
+# Seems to work, but all y-axis adjust in function of others. Should when have separate plot? CAN SEE LATER, MAYBE AS A SECOND LAYER (i.e. sub folder with individual plots)
+
+data_outliers <- function(input_data, outliers_to_remove = TRUE) {
   
   data <- input_data
   
-  # DETECTION
+  # DETECTION: Create and save boxplots of numeric columns
+  plot_with_outliers <- data %>%
+    select(where(is.numeric)) %>%
+    pivot_longer(cols = everything(), names_to = "Variable", values_to = "Value") %>%
+    ggplot(aes(x = "", y = Value)) +
+    geom_boxplot() +
+    facet_wrap(~ Variable, scales = "free_y") +
+    theme(axis.text.x = element_blank(), axis.ticks.x = element_blank()) +
+    labs(y = "Values", title = "Boxplots with outliers")
   
-  # Reshape the data and create separate boxplots for all numeric columns
-  plot <- data %>%
-    select(where(is.numeric)) %>%  # Select only numeric columns
-    pivot_longer(cols = everything(), names_to = "Variable", values_to = "Value") %>%  # Reshape data
-    ggplot(aes(x = "", y = Value)) +  # Setup axes
-    geom_boxplot() +  # Create boxplots
-    facet_wrap(~ Variable, scales = "free_y") +  # Separate plot for each variable with free y scale
-    theme(axis.text.x = element_blank(), axis.ticks.x = element_blank()) +  # Remove x-axis elements
-    labs(y = "Values", title = "Separate Boxplot for Each Numeric Variable")  # Label the y-axis and provide a title
+  # Save the initial boxplot
+  ggsave("output/data-cleaning/with-outliers-boxplot.pdf", plot_with_outliers, width = 10, height = 8)
   
-  # Save the plot to a file
-  ggsave("/data-cleaning/outliers-boxplot.pdf", plot, width = 10, height = 8)
+  # TREATMENT: Trimming or capping outliers
   
-  # TREATMENT (Trimming, Capping)
+  if (identical(outliers_to_remove, FALSE)) {
+    # If outliers_to_remove is FALSE, return the original data without modifications
+    plot_without_outliers <- data %>%
+      select(where(is.numeric)) %>%
+      pivot_longer(cols = everything(), names_to = "Variable", values_to = "Value") %>%
+      ggplot(aes(x = "", y = Value)) +
+      geom_boxplot() +
+      facet_wrap(~ Variable, scales = "free_y") +
+      theme(axis.text.x = element_blank(), axis.ticks.x = element_blank()) +
+      labs(y = "Values", title = "Boxplots without outliers (no columns were trimmed)")
+    
+    # Save the boxplot indicating no outliers were removed
+    ggsave("output/data-cleaning/without-outliers-boxplot.pdf", plot_without_outliers, width = 10, height = 8)
+    
+    return(data)
+  } else if (identical(outliers_to_remove, TRUE) || identical(outliers_to_remove, "ALL")) {
+    # If outliers_to_remove is TRUE or "ALL", apply to all numeric columns
+    outliers_to_remove <- names(data)[sapply(data, is.numeric)]
+  } else if (is.character(outliers_to_remove) && length(outliers_to_remove) > 0) {
+    # If outliers_to_remove is a character vector, ensure they exist in the data
+    valid_columns <- outliers_to_remove %in% names(data)
+    if (any(!valid_columns)) {
+      warning(paste("The following columns do not exist in the data and will be ignored:", 
+                    paste(outliers_to_remove[!valid_columns], collapse = ", ")))
+    }
+    outliers_to_remove <- outliers_to_remove[valid_columns]
+    if (length(outliers_to_remove) == 0) {
+      stop("None of the specified columns exist in the data.")
+    }
+  } else {
+    stop("Invalid value for outliers_to_remove. It should be TRUE, FALSE, 'ALL', or a character vector of column names.")
+  }
   
-  # # Trimming (removing)
-  # quantiles <- quantile(data$numeric_column, probs=c(.25, .75), na.rm = TRUE)
-  # iqr <- IQR(data$numeric_column, na.rm = TRUE)
-  # data <- data %>%
-  #   filter(numeric_column >= (quantiles[1] - 1.5 * iqr) & numeric_column <= (quantiles[2] + 1.5 * iqr))
+  # Apply outlier removal for the specified columns in outliers_to_remove
+  for (col in outliers_to_remove) {
+    quantiles <- quantile(data[[col]], probs = c(0.25, 0.75), na.rm = TRUE)
+    iqr <- IQR(data[[col]], na.rm = TRUE)
+    lower_bound <- quantiles[1] - 1.5 * iqr
+    upper_bound <- quantiles[2] + 1.5 * iqr
+    data <- data %>% filter(data[[col]] >= lower_bound & data[[col]] <= upper_bound)
+  }
+  
+  # Create and save boxplots without outliers
+  columns_string <- paste(outliers_to_remove, collapse = ", ")
+  title_string <- paste("Boxplots without outliers for:", columns_string)
+  
+  plot_without_outliers <- data %>%
+    select(where(is.numeric)) %>%
+    pivot_longer(cols = everything(), names_to = "Variable", values_to = "Value") %>%
+    ggplot(aes(x = "", y = Value)) +
+    geom_boxplot() +
+    facet_wrap(~ Variable, scales = "free_y") +
+    theme(axis.text.x = element_blank(), axis.ticks.x = element_blank()) +
+    labs(y = "Values", title = title_string)
+  
+  # Save the final boxplot
+  ggsave("output/data-cleaning/without-outliers-boxplot.pdf", plot_without_outliers, width = 10, height = 8)
   
   return(data)
 }
-#data_outliers_treated <- data_outliers(data_with_no_missing_values)
+data_outliers_treated <- data_outliers(data_with_no_missing_values, TRUE) # c("AverageFee")
 
 # #########################
 # # 3.Feature Engineering #
