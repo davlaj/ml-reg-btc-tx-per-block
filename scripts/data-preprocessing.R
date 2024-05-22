@@ -54,8 +54,65 @@ missing_values <- function (input_data){
 }
 #data_without_missing_values <- missing_values(data_formatted)
 
+##################################
+# 2.Temporal Feature Engineering #
+##################################
+# To avoid introducing inaccuracies or distortions in temporal calculations, which can occur due to gaps
+# in the data after the removal of outliers and would create new outliers
+
+temporal_feature <- function(input_data) {
+
+  data <- input_data
+    
+  # TEMPORAL FEATURES
+  
+  # Ascending sort by Date
+  data <- data %>%
+    arrange(Date)
+  
+  ## Time between consecutive blocks in minutes
+  data <- data %>%
+    mutate(TimeDiffMinutes = c(NA, diff(Date) / 60))
+  ## Hour of the day
+  data$HourOfDay <- hour(data$Date)
+  ## Day of the week
+  # 1 = Sunday, 2 = Monday, ..., 7 = Saturday
+  data$DayOfWeek <- wday(data$Date)
+  ## Weekday = 0, Weekend = 1
+  data$IsWeekend <- ifelse(data$DayOfWeek %in% c(1, 7), 1, 0)
+  
+  ## Lagged features to retrieve the value of the previous block
+  data$TotalTransactions_Lag1 <- dplyr::lag(data$TotalTransactions, 1)
+  data$BlockSize_Lag1 <- dplyr::lag(data$BlockSize, 1)
+  data$AverageFee_Lag1 <- dplyr::lag(data$AverageFee, 1)
+  data$TotalFees_Lag1 <- dplyr::lag(data$TotalFees, 1)
+  
+  ## Running average features
+  # Loop over each column and window size
+  for (col in c("TotalTransactions","BlockSize", "AverageFee", "TotalFees")) {
+    for (k in 2:3) {
+      # Running average including the current block
+      running_avg <- rollmean(data[[col]], k = k, fill = NA, align = "right")
+      # Shift the running average forward by one block so it exclude the current block
+      running_avg <- lag(running_avg, 1, default = NA)
+      
+      # Create a new column name based on the original column name and k
+      new_col_name <- paste(col, "_RunningAvg", k, sep = "")
+      # Assign the running average to a new column in the data
+      data[[new_col_name]] <- running_avg
+    }
+  }
+  
+  # Check for NA values and decide on deleting these rows
+  summary(data)
+  head(data)
+  data <- data[-(1:3),]
+
+}
+#data_with_temporal_feature <- temporal_feature(data_without_missing_values)
+
 ##############
-# 2.Outliers #
+# 3.Outliers #
 ##############
 
 # Seems to work, but all y-axis adjust in function of others. Should when have separate plot? CAN SEE LATER, MAYBE AS A SECOND LAYER (i.e. sub folder with individual plots)
@@ -75,47 +132,37 @@ outliers <- function(input_data, outliers_to_remove = TRUE) {
     labs(y = "Values", title = "Boxplots with outliers")
   
   # Save the initial boxplot
-  ggsave("output/data-cleaning/with-outliers-boxplot.pdf", plot_with_outliers, width = 10, height = 8)
+  ggsave("output/data-cleaning/3.1-with-outliers-boxplot.pdf", plot_with_outliers, width = 10, height = 8)
   
   # TREATMENT (Trimming or capping)
   
-  if (identical(outliers_to_remove, FALSE)) {
-    # If outliers_to_remove is FALSE, return the original data without modifications
-    plot_without_outliers <- data %>%
-      select(where(is.numeric)) %>%
-      pivot_longer(cols = everything(), names_to = "Variable", values_to = "Value") %>%
-      ggplot(aes(x = "", y = Value)) +
-      geom_boxplot() +
-      facet_wrap(~ Variable, scales = "free_y") +
-      theme(axis.text.x = element_blank(), axis.ticks.x = element_blank()) +
-      labs(y = "Values", title = "Boxplots without outliers (no columns were trimmed)")
-    
-    # Save the boxplot indicating no outliers were removed
-    ggsave("output/data-cleaning/without-outliers-boxplot.pdf", plot_without_outliers, width = 10, height = 8)
-    
-    return(data)
-    
-  } else if (identical(outliers_to_remove, TRUE) || identical(outliers_to_remove, "ALL")) {
-    # If outliers_to_remove is TRUE or "ALL", apply to all numeric columns
+  # Check if outliers removal is set to FALSE, then exit early
+  if (is.logical(outliers_to_remove) && !outliers_to_remove) {
+    # Attempt to delete the graph 3.1-without-outliers-boxplot if it exists
+    file_path <- "output/data-cleaning/3.2-without-outliers-boxplot.pdf"
+    if (file.exists(file_path)) {
+      file_removed <- file.remove(file_path)
+    }
+    return(data)  # Return original data without any changes
+  }
+  
+  # Process based on type of outliers_to_remove
+  if (is.logical(outliers_to_remove) && outliers_to_remove) {
     outliers_to_remove <- names(data)[sapply(data, is.numeric)]
-    
-  } else if (is.character(outliers_to_remove) && length(outliers_to_remove) > 0) {
-    # If outliers_to_remove is a character vector, ensure they exist in the data
+  } else if (is.character(outliers_to_remove)) {
     valid_columns <- outliers_to_remove %in% names(data)
     if (any(!valid_columns)) {
-      warning(paste("The following columns do not exist in the data and will be ignored:", 
-                    paste(outliers_to_remove[!valid_columns], collapse = ", ")))
+      warning("The following columns do not exist:", paste(outliers_to_remove[!valid_columns], collapse = ", "))
+      outliers_to_remove <- outliers_to_remove[valid_columns]
     }
-    outliers_to_remove <- outliers_to_remove[valid_columns]
     if (length(outliers_to_remove) == 0) {
       stop("None of the specified columns exist in the data.")
     }
-    
   } else {
-    stop("Invalid value for outliers_to_remove. It should be TRUE, FALSE, 'ALL', or a character vector of column names.")
+    stop("Invalid value for outliers_to_remove. It should be TRUE, FALSE, or a character vector of column names.")
   }
   
-  # Apply outlier removal for the specified columns in outliers_to_remove
+  # Apply outlier removal for the specified columns
   for (col in outliers_to_remove) {
     quantiles <- quantile(data[[col]], probs = c(0.25, 0.75), na.rm = TRUE)
     iqr <- IQR(data[[col]], na.rm = TRUE)
@@ -125,9 +172,6 @@ outliers <- function(input_data, outliers_to_remove = TRUE) {
   }
   
   # Create and save boxplots without outliers
-  columns_string <- paste(outliers_to_remove, collapse = ", ")
-  title_string <- paste("Boxplots without outliers for:", columns_string)
-  
   plot_without_outliers <- data %>%
     select(where(is.numeric)) %>%
     pivot_longer(cols = everything(), names_to = "Variable", values_to = "Value") %>%
@@ -135,70 +179,34 @@ outliers <- function(input_data, outliers_to_remove = TRUE) {
     geom_boxplot() +
     facet_wrap(~ Variable, scales = "free_y") +
     theme(axis.text.x = element_blank(), axis.ticks.x = element_blank()) +
-    labs(y = "Values", title = title_string)
+    labs(y = "Values", title = "Boxplots without outliers")
   
-  # Save the final boxplot
-  ggsave("output/data-cleaning/without-outliers-boxplot.pdf", plot_without_outliers, width = 10, height = 8)
+  ggsave("output/data-cleaning/3.2-without-outliers-boxplot.pdf", plot_without_outliers, width = 10, height = 8)
+  
+  # #SCATTER PLOTS
   
   return(data)
 }
-#data_outliers_treated <- data_outliers(data_without_missing_values, TRUE) # c("AverageFee")
+#data_outliers_treated <- outliers(data_with_temporal_feature, outliers_to_remove = FALSE) # c("AverageFee")
 
-#########################
-# 3.Feature Engineering #
-#########################
+####################################################
+# 4.Interaction and Polynomial Feature Engineering #
+####################################################
 
-feature_engineer <- function(input_data, outliers_to_remove = TRUE) {
+interaction_polynomial_feature <- function(input_data) {
 
-  # TEMPORAL FEATURES
-
-  # Ensure data is sorted by the 'Date' column
-  data <- data %>%
-    arrange(Date)
-
-  ## Calculate the time difference in minutes between consecutive blocks
-  data <- data %>%
-    mutate(TimeDiffMinutes = c(NA, diff(Date) / 60))  # 'diff' calculates the difference between consecutive elements
-  ## Hour of the day
-  data$HourOfDay <- hour(data$Date)
-  ## Day of the week
-  # Returns numbers where 1 = Sunday, 2 = Monday, ..., 7 = Saturday
-  data$DayOfWeek <- wday(data$Date)
-  ## Whether the day is a weekday or weekend
-  data$IsWeekend <- ifelse(data$DayOfWeek %in% c(1, 7), 1, 0)
-
-  # Create lagged features to retrieve the value of the previous block
-  data$TotalTransactions_Lag1 <- dplyr::lag(data$TotalTransactions, 1)
-  data$BlockSize_Lag1 <- dplyr::lag(data$BlockSize, 1)
-  data$AverageFee_Lag1 <- dplyr::lag(data$AverageFee, 1)
-  data$TotalFees_Lag1 <- dplyr::lag(data$TotalFees, 1)
-  # Create running average features
-  # Calculate running average of the previous 3 blocks including the current block
-  data$TotalTransactions_RunningAvg3 <- rollmean(data$TotalTransactions, k = 3, fill = NA, align = "right")
-  # Shift forward by one block so the running average is for the previous 3 blocks excluding the current one
-  data$TotalTransactions_RunningAvg3 <- dplyr::lag(data$TotalTransactions_RunningAvg3, 1, default = NA)
-  data$BlockSize_RunningAvg3 <- rollmean(data$BlockSize, k = 3, fill = NA, align = "right")
-  data$BlockSize_RunningAvg3 <- dplyr::lag(data$BlockSize_RunningAvg3, 1, default = NA)
-  data$AverageFee_RunningAvg3 <- rollmean(data$AverageFee, k = 3, fill = NA, align = "right")
-  data$AverageFee_RunningAvg3 <- dplyr::lag(data$AverageFee_RunningAvg3, 1, default = NA)
-  data$TotalFees_RunningAvg3 <- rollmean(data$TotalFees, k = 3, fill = NA, align = "right")
-  data$TotalFees_RunningAvg3 <- dplyr::lag(data$TotalFees_RunningAvg3, 1, default = NA)
-
-  # Check for NA values and decide on deleting these rows
-  summary(data)
-  head(data)
-  data <- data[-(1:3),]
+  data <- input_data
 
   # INTERACTION FEATURES
 
   # Transaction volumes might vary by time of day differently on weekends versus weekdays
-  data$Interaction_HourWeekend <- with(data, HourOfDay * IsWeekend)
+  data$Interaction_HourIsWeekend <- with(data, HourOfDay * IsWeekend)
   # To examine if larger blocks, which can include more transactions and potentially higher fees,
   # also correlate with higher average fees in a way that isn't linearly predictable from either
   # block size or average fees alone.
   # This could reflect situations where larger blocks are processed with priority due to higher fees
   # being included, influencing the transaction count in those blocks differently than smaller blocks.
-  data$Interaction_BlockSizeFee <- with(data, BlockSize_Lag1 * AverageFee_Lag1)
+  data$Interaction_BlockSizeAvgFee <- with(data, BlockSize_Lag1 * AverageFee_Lag1)
 
   # POLYNOMIAL FEATURES
 
@@ -209,31 +217,56 @@ feature_engineer <- function(input_data, outliers_to_remove = TRUE) {
   data$HourOfDay_Squared <- with(data, HourOfDay^2)
   data$HourOfDay_Cubed <- with(data, HourOfDay^3)
 
-  # VIZUALIZATION OF ENGINEERED FEATURES TO SEE CORRELATION WITH DEPENDENT VARIABLE
+  # VISUALIZATION
 
   # Define the function to create multiple scatter plots
   plot_scatter_plots <- function(data, var_list) {
-    plots <- list()  # Initialize list to store ggplot objects
+    plots <- list()  # Initialize to store ggplot objects
 
     for (var_name in var_list) {
-      p <- ggplot(data, aes_string(x = var_name, y = "TotalTransactions")) +
+      p <- ggplot(data, aes(x = .data[[var_name]], y = .data[["TotalTransactions"]])) +
         geom_point(alpha = 0.5) +
         geom_smooth(method = "lm", color = "blue") +
         labs(title = paste("Total Transactions vs.", var_name),
              x = var_name,
              y = "Total Transactions")
+
       plots[[length(plots) + 1]] <- p  # Append plot to list
     }
 
-    # Arrange and display all plots
-    do.call(grid.arrange, c(plots, ncol = 2))
+    # Determine number of plots per page
+    plots_per_page <- 6  # 2x2 layout
+    page_number <- ceiling(length(plots) / plots_per_page)
+
+    # Open a PDF device
+    pdf("output/data-cleaning/4.1-full_feature_engineered_scatter_plots.pdf", width = 20, height = 15)
+
+    for (i in seq_len(page_number)) {
+      # Subset plots for the current page
+      slice_start <- (i - 1) * plots_per_page + 1
+      slice_end <- min(i * plots_per_page, length(plots))
+      page_plots <- plots[slice_start:slice_end]
+      page_plots_layout <- do.call(patchwork::wrap_plots, c(page_plots, ncol = 3))
+
+      print(page_plots_layout)
+    }
+
+    # Close the PDF device
+    dev.off()
   }
 
+  # Filter data to include only numeric columns
+  numeric_data <- select(data, where(is.numeric))
+
+  # Get the names of all numeric columns
+  numeric_columns <- names(numeric_data)
+
   # Call the function with the list of variables you want to plot
-  plot_scatter_plots(data, c("TotalTransactions_Lag1", "TotalTransactions_RunningAvg3",
-                             "Interaction_BlockSizeFee", "BlockSize_Cubed"))
+  plot_scatter_plots(data, numeric_columns)
+
+  return(data)
 }
-# data_feature_engineered <- feature_engineer(data_outliers_treated)
+#data_full_feature_engineered <- interaction_polynomial_feature(data_outliers_treated)
 
 # ##############
 # # 4.Encoding # Apply to categorical variables

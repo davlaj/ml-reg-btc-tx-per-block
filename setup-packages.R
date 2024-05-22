@@ -13,4 +13,5 @@ pacman::p_load(httr,
                caret, 
                timetk, 
                modeltime, 
-               gridExtra)
+               gridExtra,
+               patchwork)
