@@ -35,6 +35,8 @@ test_set <- data[-training_rows[[1]], ]
 # 3.Scaling # Apply to continuous numeric non-categorical variables
 #############
 
+# WHICH ALGORITHMS NEED SCALING?
+
 # NORMALIZATION = (x-xmin)/(xmax-xmin)
 # no
 

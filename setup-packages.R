@@ -14,4 +14,7 @@ pacman::p_load(httr,
                timetk, 
                modeltime, 
                gridExtra,
-               patchwork)
+               patchwork,
+               corrplot,
+               GGally,
+               forecast)
