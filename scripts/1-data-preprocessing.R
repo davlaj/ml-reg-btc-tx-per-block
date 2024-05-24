@@ -84,15 +84,19 @@ temporal_feature <- function(input_data) {
   ## Weekday = 0, Weekend = 1
   data$IsWeekend <- ifelse(data$DayOfWeek %in% c(1, 7), 1, 0)
   
+  ## Transformation features
+  # Reduces the effect of outliers, reduces skewness in data
+  # Handling right-skewed data by compressing large values more than smaller ones, bringing the data closer to a normal distribution
+  data$TotalFeesLog <- log1p(data$TotalFees)
+  
   ## Lagged features to retrieve the value of the previous block
   data$TotalTransactions_Lag1 <- dplyr::lag(data$TotalTransactions, 1)
   data$BlockSize_Lag1 <- dplyr::lag(data$BlockSize, 1)
-  data$AverageFee_Lag1 <- dplyr::lag(data$AverageFee, 1)
   data$TotalFees_Lag1 <- dplyr::lag(data$TotalFees, 1)
   
   ## Running average features
   # Loop over each column and window size
-  for (col in c("TotalTransactions","BlockSize", "AverageFee", "TotalFees")) {
+  for (col in c("TotalTransactions","BlockSize", "TotalFees", "TotalFeesLog")) {
     for (k in 2:3) {
       # Running average including the current block
       running_avg <- rollmean(data[[col]], k = k, fill = NA, align = "right")
@@ -113,7 +117,7 @@ temporal_feature <- function(input_data) {
 
 }
 #data_with_temporal_feature <- temporal_feature(data_without_missing_values)
-#analyze_temporal_features(data_with_temporal_feature)
+#analyze_temporal_features(data_with_temporal_feature, c("TotalTransactions", "BlockSize", "AverageFee", "TotalFees"), log_transform = FALSE)
 
 ##############
 # 3.Outliers #

@@ -14,6 +14,8 @@ analyze_post_formatting <- function(data) {
   
   # Open a text file for writing summary statistics
   sink(paste0(output_dir, "/0.1-data_summary_post_formating.txt"))
+  cat("SUMMARY\n")
+  cat("-----------------\n")
   print(summary(data))
   sink()  # Stop diverting the output to the file
   
@@ -38,6 +40,8 @@ analyze_post_missing_values <- function(data, data_before = NULL) {
   
   # Open a text file for writing summary statistics
   sink(paste0(output_dir, "/1.1-data_summary_post_missing_values.txt"))
+  cat("SUMMARY\n")
+  cat("-----------------\n")
   print(summary(data))
   sink()  # Stop diverting the output to the file
   
@@ -71,114 +75,100 @@ analyze_post_missing_values <- function(data, data_before = NULL) {
   dev.off()
 }
 
-# # Function to analyze Temporal Features
-# analyze_temporal_features <- function(data) {
-#   
-#   # Open PDF output
-#   pdf(paste0(output_dir, "/2.1-temporal_feature_analysis.pdf"))
-#   
-#   # Time series plot of Total Transactions
-#   p1 <- ggplot(data, aes(x = Date, y = TotalTransactions)) +
-#     geom_line(color = "blue") +
-#     labs(title = "Time Series of Total Transactions", x = "Date", y = "Total Transactions") +
-#     theme_minimal()
-#   
-#   # Time series decomposition of Total Transactions
-#   if (all(!is.na(data$TotalTransactions))) {
-#     ts_data <- ts(data$TotalTransactions, frequency = 24*6)  # adjust frequency based on your data's seasonality
-#     decomposed_ts <- stl(ts_data, s.window = "periodic")
-#     p2 <- autoplot(decomposed_ts) + 
-#       ggtitle("Decomposed Time Series of Total Transactions")
-#   } else {
-#     p2 <- ggplot() + 
-#       geom_blank() +
-#       ggtitle("Decomposed Time Series Not Available - Missing Values")
-#   }
-#   
-#   # Autocorrelation Function (ACF) plot
-#   p3 <- ggAcf(data$TotalTransactions, na.action = na.pass) +
-#     ggtitle("ACF of Total Transactions")
-#   
-#   # Scatter plot of Transactions vs. Lagged Transactions
-#   p4 <- ggplot(data, aes(x = TotalTransactions_Lag1, y = TotalTransactions)) +
-#     geom_point(alpha = 0.5) +
-#     geom_smooth(method = "lm", color = "red") +
-#     labs(title = "Total Transactions vs. Lagged Transactions",
-#          x = "Lagged Transactions", y = "Total Transactions") +
-#     theme_minimal()
-#   
-#   # Combining plots
-#   grid.arrange(p1, p2, p3, p4, ncol = 2)
-#   
-#   dev.off()
-# }
-
-analyze_temporal_features <- function(data, variables) {
+# Function to analyze Temporal Features
+analyze_temporal_features <- function(data, variables, target_var, log_transform = FALSE) {
+  
+  # Open a text file for writing summary statistics
+  sink(paste0(output_dir, "/2.1-data_summary_post_temporal_features.txt"))
+  # Print the section title for column names in a clear format
+  cat("COLUMN NAMES\n")
+  cat("-----------------\n")
+  print(names(data))
+  cat("\n")  # Adding a newline for better separation
+  cat("SUMMARY\n")
+  cat("-----------------\n")
+  print(summary(data))
+  sink()  # Stop diverting the output to the file
+  
+  # Define the output file name based on whether log transformation is applied
+  file_name <- if (log_transform) {
+    "2.2-log_transformed_temporal_feature_analysis.pdf"
+  } else {
+    "2.2-temporal_feature_analysis.pdf"
+  }
+  
   # Open PDF output
-  pdf(paste0(output_dir, "/2.1-temporal_feature_analysis.pdf"))
+  pdf(paste0(output_dir, "/", file_name))
   
   # Iterate over each variable
   for (var in variables) {
     # Convert character variable name to symbol
     var_sym <- sym(var)
     lag_var_sym <- sym(paste(var, "Lag1", sep = "_"))
+    target_var_sym <- sym(target_var)
     
     # Ensure lagged column exists
-    data[[paste(var, "Lag1", sep = "_")]] <- dplyr::lag(data[[var]], 1)
+    data[[paste(var, "Lag1", sep = "_")]] <- lag(data[[var]], 1)
+    
+    # Apply log transformation if selected
+    transform <- function(x) if (log_transform) log1p(x) else x
     
     # Time series plot
-    ts_plot <- ggplot(data, aes(x = Date, y = !!var_sym)) +
+    ts_plot <- ggplot(data, aes(x = Date, y = transform(!!var_sym))) +
       geom_line(color = "blue") +
-      labs(title = paste("Time Series of", var), x = "Date", y = var) +
+      labs(title = paste(if (log_transform) "Log-Transformed" else "", "Time Series of", var),
+           x = "Date", y = if (log_transform) paste("Log of", var) else var) +
       theme_minimal()
     
     # Decomposition plot, only if no NAs
     if (all(!is.na(data[[var]]))) {
-      ts_data <- ts(data[[var]], frequency = 24*6)  # Adjust frequency based on data's seasonality
+      ts_data <- ts(transform(data[[var]]), frequency = 24*6)  # Adjust frequency based on data's seasonality
       decomposed_ts <- stl(ts_data, s.window = "periodic")
       decomposed_plot <- autoplot(decomposed_ts) + 
-        ggtitle(paste("Decomposed Time Series of", var))
+        ggtitle(paste(if (log_transform) "Log-Transformed" else "", "Decomposed Time Series of", var))
     } else {
       decomposed_plot <- ggplot() + 
         geom_blank() +
-        ggtitle(paste("Decomposed Time Series of", var, "Not Available - Missing Values"))
+        ggtitle(paste(if (log_transform) "Log-Transformed" else "", "Decomposed Time Series of", var, "Not Available - Missing Values"))
     }
     
     # ACF plot
-    acf_plot <- ggAcf(data[[var]], na.action = na.pass) +
-      ggtitle(paste("ACF of", var))
+    acf_plot <- ggAcf(transform(data[[var]]), na.action = na.pass) +
+      ggtitle(paste("ACF of", if (log_transform) "Log-Transformed" else "", var))
     
     # Scatter plot of Variable vs. its Lagged version
-    scatter_plot <- ggplot(data, aes(x = !!lag_var_sym, y = !!var_sym)) +
+    scatter_plot <- ggplot(data[-1,], aes(x = transform(!!lag_var_sym), y = transform(!!var_sym))) +
       geom_point(alpha = 0.5) +
       geom_smooth(method = "lm", color = "red") +
-      labs(title = paste(var, "vs. Lagged", var),
-           x = paste("Lagged", var), y = var) +
+      labs(title = paste(if (log_transform) "Log of" else "", var, "vs. Lagged", if (log_transform) "Log of" else "", var),
+           x = if (log_transform) paste("Lagged Log of", var) else paste("Lagged", var),
+           y = if (log_transform) paste("Log of", var) else var) +
       theme_minimal()
     
-    # Print each set of plots on a new page
-    print(gridExtra::grid.arrange(ts_plot, decomposed_plot, acf_plot, scatter_plot, ncol = 2))
+    # Scatter plot of Variable vs. Target Variable
+    correlation_plot <- ggplot(data, aes(x = data[[target_var_sym]], y = transform(!!var_sym))) +
+      geom_point(alpha = 0.5, color = "green") +
+      geom_smooth(method = "lm", color = "darkgreen") +
+      labs(title = paste(if (log_transform) "Log of" else "", var, "vs.", target_var),
+           x = target_var, 
+           y = if (log_transform) paste("Log of", var) else var) +
+      theme_minimal()
+    
+    # Cross-Correlation Function (CCF) and plot
+    # Interpretation: e.g. positive correlation at a lag of 5 implies that a change first variable 
+    # significantly predict the movement in the second variable five time units later
+    ccf_data <- ccf(transform(data[[var]]), data[[target_var_sym]], na.action = na.exclude, lag.max = 20, plot = FALSE)
+    ccf_plot <- autoplot(ccf_data) +
+      ggtitle(paste("Cross-Correlation Function of", var, "and", target_var))
+    
+    # Print each set of plots on a new page including the CCF plot
+    print(gridExtra::grid.arrange(ts_plot, decomposed_plot, acf_plot, scatter_plot, correlation_plot, ccf_plot, ncol = 2))
   }
   
   # Close the PDF
   dev.off()
 }
-#analyze_temporal_features(data, c("TotalTransactions", "BlockSize", "AverageFee", "TotalFees"))
-
-
-#Statistical Tests: Consider statistical tests for seasonality, such as the Ljung-Box test on 
-#the seasonal component, to quantitatively assess its significance.
-
-#ADF (Augmented Dickey-Fuller) Test: Tests the null hypothesis that a unit root is present in a time series sample 
-#(i.e., the series is non-stationary).
-#KPSS (Kwiatkowski-Phillips-Schmidt-Shin) Test: Tests for the stationarity of a time series around a deterministic 
-#trend.
-#Ljung-Box Test: Checks if there are significant autocorrelations at lag k in the residuals of a time series model.
-
-
-
-#################################################
-
+#analyze_temporal_features(data, c("TotalTransactions", "BlockSize", "AverageFee", "TotalFees"), target_var = "TotalTransactions", log_transform = FALSE)
 
 # Function to evaluate Outliers Treatment
 analyze_post_outliers <- function(data) {
