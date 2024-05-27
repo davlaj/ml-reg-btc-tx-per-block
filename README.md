@@ -107,25 +107,6 @@ The entire data analysis and modeling pipeline is managed using the targets pack
 source("run-pipeline.R")
 ```
 
-This script will execute the targets pipeline defined in _targets.R, performing all steps from raw data extraction to model evaluation.
-
-## Detailed Workflow
-
-The workflow is divided into several stages, each corresponding to different parts of the data analysis and machine learning process.
-
-### Raw Data Extraction (0-data-raw-extraction.R):
-
-### Extract raw Bitcoin transaction data from the specified sources.
-Data Preprocessing (1-data-preprocessing.R):
-
-### Clean and preprocess the data, handle missing values, and engineer features.
-Exploratory Data Analysis (1-exploratory-data-analysis.R):
-
-### Perform initial exploratory analysis to understand the data distribution and relationships.
-Model Evaluation (2-model-evaluation.R):
-
-### Train and evaluate machine learning models to predict the number of transactions per block.
-
 ### Output
 The results of the analysis and modeling are stored in the output/ directory. This includes visualizations, summary statistics, and model performance metrics.
 
