@@ -74,7 +74,7 @@ source("run-pipeline.R")
 
 2. Run the entire pipeline:
     ```r
-    targets::tar_make()
+    source("run-pipeline.R")
     ```
 
 This will execute the entire data analysis and modeling pipeline, generating the necessary output files in the `output/` directory.
