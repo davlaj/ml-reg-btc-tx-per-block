@@ -4,18 +4,18 @@ This repository contains the code and data for the analysis and modeling of Bitc
 
 ## Repository Structure
 
-├── _targets/                   # Directory for 'targets' package outputs
-├── _targets.R                  # Main targets pipeline script
-├── .gitignore                  # Git ignore file
-├── data/                       # Directory for raw and processed data
-├── docs/                       # Documentation files
-├── output/                     # Directory for output files
-├── scripts/                    # Directory for R scripts
-│   ├── 0-data-raw-extraction.R     # Script for raw data extraction
-│   ├── 1-data-preprocessing.R      # Script for data preprocessing
+├── _targets/                    # Directory for 'targets' package outputs
+├── _targets.R                   # Main targets pipeline script
+├── .gitignore                   # Git ignore file
+├── data/                        # Directory for raw and processed data
+├── docs/                        # Documentation files
+├── output/                      # Directory for output files
+├── scripts/                     # Directory for R scripts
+│   ├── 0-data-raw-extraction.R  # Script for raw data extraction
+│   ├── 1-data-preprocessing.R   # Script for data preprocessing
 │   ├── 1-exploratory-data-analysis.R  # Script for exploratory data analysis
-│   ├── 2-model-evaluation.R       # Script for model evaluation
-├── ml-reg-btc-tx-per-block.Rproj   # RStudio project file
+│   ├── 2-model-evaluation.R     # Script for model evaluation
+├── ml-reg-btc-tx-per-block.Rproj # RStudio project file
 ├── run-pipeline.R               # Script to run the entire pipeline
 ├── setup-packages.R             # Script to install and load required packages
 └── README.md                    # This README file
