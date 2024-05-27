@@ -8,10 +8,11 @@ COLUMN NAMES
 [11] "DayOfWeek"                     "IsWeekend"                    
 [13] "TotalFeesLog"                  "TotalTransactions_Lag1"       
 [15] "BlockSize_Lag1"                "TotalFees_Lag1"               
-[17] "TotalTransactions_RunningAvg2" "TotalTransactions_RunningAvg3"
-[19] "BlockSize_RunningAvg2"         "BlockSize_RunningAvg3"        
-[21] "TotalFees_RunningAvg2"         "TotalFees_RunningAvg3"        
-[23] "TotalFeesLog_RunningAvg2"      "TotalFeesLog_RunningAvg3"     
+[17] "TotalFeesLog_Lag1"             "TotalTransactions_RunningAvg2"
+[19] "TotalTransactions_RunningAvg3" "BlockSize_RunningAvg2"        
+[21] "BlockSize_RunningAvg3"         "TotalFees_RunningAvg2"        
+[23] "TotalFees_RunningAvg3"         "TotalFeesLog_RunningAvg2"     
+[25] "TotalFeesLog_RunningAvg3"     
 
 SUMMARY
 -----------------
@@ -43,24 +44,31 @@ SUMMARY
  Mean   :0.2973   Mean   :0.3686   Mean   :3009           Mean   :1741285  
  3rd Qu.:1.0000   3rd Qu.:0.4231   3rd Qu.:3556           3rd Qu.:1849539  
  Max.   :1.0000   Max.   :3.6539   Max.   :8320           Max.   :3993936  
- TotalFees_Lag1    TotalTransactions_RunningAvg2 TotalTransactions_RunningAvg3
- Min.   : 0.0000   Min.   :  81.5                Min.   : 130.7               
- 1st Qu.: 0.1813   1st Qu.:2379.5                1st Qu.:2391.0               
- Median : 0.2948   Median :2929.5                Median :2907.0               
- Mean   : 0.6003   Mean   :3008.7                Mean   :3008.7               
- 3rd Qu.: 0.5267   3rd Qu.:3505.5                3rd Qu.:3472.0               
- Max.   :37.6256   Max.   :6736.5                Max.   :6621.7               
- BlockSize_RunningAvg2 BlockSize_RunningAvg3 TotalFees_RunningAvg2
- Min.   : 590760       Min.   : 843723       Min.   : 0.03848     
- 1st Qu.:1578782       1st Qu.:1588077       1st Qu.: 0.18934     
- Median :1690984       Median :1695772       Median : 0.29569     
- Mean   :1741277       Mean   :1741271       Mean   : 0.60027     
- 3rd Qu.:1843078       3rd Qu.:1842900       3rd Qu.: 0.52803     
- Max.   :3710399       Max.   :3660581       Max.   :26.91451     
- TotalFees_RunningAvg3 TotalFeesLog_RunningAvg2 TotalFeesLog_RunningAvg3
- Min.   : 0.05134      Min.   :0.03707          Min.   :0.04946         
- 1st Qu.: 0.19089      1st Qu.:0.17268          1st Qu.:0.17389         
- Median : 0.29561      Median :0.25796          Median :0.25744         
- Mean   : 0.60027      Mean   :0.36861          Mean   :0.36861         
- 3rd Qu.: 0.52544      3rd Qu.:0.42263          3rd Qu.:0.41908         
- Max.   :25.66171      Max.   :3.32370          Max.   :3.27731         
+ TotalFees_Lag1    TotalFeesLog_Lag1 TotalTransactions_RunningAvg2
+ Min.   : 0.0000   Min.   :0.0000    Min.   :  81.5               
+ 1st Qu.: 0.1813   1st Qu.:0.1666    1st Qu.:2379.5               
+ Median : 0.2948   Median :0.2584    Median :2929.5               
+ Mean   : 0.6003   Mean   :0.3686    Mean   :3008.7               
+ 3rd Qu.: 0.5267   3rd Qu.:0.4231    3rd Qu.:3505.5               
+ Max.   :37.6256   Max.   :3.6539    Max.   :6736.5               
+ TotalTransactions_RunningAvg3 BlockSize_RunningAvg2 BlockSize_RunningAvg3
+ Min.   : 130.7                Min.   : 590760       Min.   : 843723      
+ 1st Qu.:2391.0                1st Qu.:1578782       1st Qu.:1588077      
+ Median :2907.0                Median :1690984       Median :1695772      
+ Mean   :3008.7                Mean   :1741277       Mean   :1741271      
+ 3rd Qu.:3472.0                3rd Qu.:1843078       3rd Qu.:1842900      
+ Max.   :6621.7                Max.   :3710399       Max.   :3660581      
+ TotalFees_RunningAvg2 TotalFees_RunningAvg3 TotalFeesLog_RunningAvg2
+ Min.   : 0.03848      Min.   : 0.05134      Min.   :0.03707         
+ 1st Qu.: 0.18934      1st Qu.: 0.19089      1st Qu.:0.17268         
+ Median : 0.29569      Median : 0.29561      Median :0.25796         
+ Mean   : 0.60027      Mean   : 0.60027      Mean   :0.36861         
+ 3rd Qu.: 0.52803      3rd Qu.: 0.52544      3rd Qu.:0.42263         
+ Max.   :26.91451      Max.   :25.66171      Max.   :3.32370         
+ TotalFeesLog_RunningAvg3
+ Min.   :0.04946         
+ 1st Qu.:0.17389         
+ Median :0.25744         
+ Mean   :0.36861         
+ 3rd Qu.:0.41908         
+ Max.   :3.27731         

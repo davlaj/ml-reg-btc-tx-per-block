@@ -12,15 +12,17 @@ raw_data <- read.csv("data/raw/block_data.csv")
 #################
 
 # Includes:
-# Handling missing values (e.g., filling in, imputing, or removing missing data)
 # Removing duplicates
 # Correcting errors and inconsistencies (e.g., fixing typos, standardizing formats)
-# Filtering out outliers or irrelevant data
 # Ensuring data types are correct (e.g., converting strings to integers)
 
 formatting <- function (input_file){
   
   data <- input_file
+  
+  # Remove duplicate rows
+  data <- data %>% distinct()
+  
   # Convert the 'Date' column to POSIXct date-time objects
   data$Date <- as.POSIXct(data$Date, origin="1970-01-01", tz="UTC")
   
@@ -30,7 +32,7 @@ formatting <- function (input_file){
 #analyze_post_formatting(data_formatted)
 
 ####################
-# 1.Missing Values #
+# 1.Missing Values # 
 ####################
 
 missing_values <- function (input_data){
@@ -44,7 +46,9 @@ missing_values <- function (input_data){
   
   output_dir <- "output/exploratory-data-analysis"
   # Open a text file for writing summary statistics
-  sink(paste0(output_dir, "/1.0-missing-averageFee_rows.txt"))
+  sink(paste0(output_dir, "/1.0-missing_rows_averageFee.txt"))
+  cat("ROWS WITH MISSING VALUES\n")
+  cat("-----------------\n")
   print(missing_AverageFee_rows) 
   sink()  # Stop diverting the output to the file
   
@@ -84,7 +88,7 @@ temporal_feature <- function(input_data) {
   ## Weekday = 0, Weekend = 1
   data$IsWeekend <- ifelse(data$DayOfWeek %in% c(1, 7), 1, 0)
   
-  ## Transformation features
+  ## Log-Transformation features
   # Reduces the effect of outliers, reduces skewness in data
   # Handling right-skewed data by compressing large values more than smaller ones, bringing the data closer to a normal distribution
   data$TotalFeesLog <- log1p(data$TotalFees)
@@ -93,6 +97,7 @@ temporal_feature <- function(input_data) {
   data$TotalTransactions_Lag1 <- dplyr::lag(data$TotalTransactions, 1)
   data$BlockSize_Lag1 <- dplyr::lag(data$BlockSize, 1)
   data$TotalFees_Lag1 <- dplyr::lag(data$TotalFees, 1)
+  data$TotalFeesLog_Lag1 <- dplyr::lag(data$TotalFeesLog, 1)
   
   ## Running average features
   # Loop over each column and window size
@@ -111,8 +116,6 @@ temporal_feature <- function(input_data) {
   }
   
   # Check for NA values and decide on deleting these rows
-  summary(data)
-  head(data)
   data <- data[-(1:3),]
 
 }
@@ -126,26 +129,13 @@ temporal_feature <- function(input_data) {
 outliers <- function(input_data, outliers_to_remove = TRUE) {
   
   data <- input_data
-  
-  # DETECTION: Create and save boxplots of numeric columns
-  plot_with_outliers <- data %>%
-    select(where(is.numeric)) %>%
-    pivot_longer(cols = everything(), names_to = "Variable", values_to = "Value") %>%
-    ggplot(aes(x = "", y = Value)) +
-    geom_boxplot() +
-    facet_wrap(~ Variable, scales = "free_y") +
-    theme(axis.text.x = element_blank(), axis.ticks.x = element_blank()) +
-    labs(y = "Values", title = "Boxplots with outliers")
-  
-  # Save the initial boxplot
-  ggsave("output/exploratory-data-analysis/TO-REUBICATE-with-outliers-boxplot.pdf", plot_with_outliers, width = 10, height = 8)
-  
+
   # TREATMENT (Trimming or capping)
   
   # Check if outliers removal is set to FALSE, then exit early
   if (is.logical(outliers_to_remove) && !outliers_to_remove) {
     # Attempt to delete the graph 3.1-without-outliers-boxplot if it exists
-    file_path <- "output/data-preprocessing/TO-REUBICATE-without-outliers-boxplot.pdf"
+    file_path <- "output/expl/TO-REUBICATE-without-outliers-boxplot.pdf"
     if (file.exists(file_path)) {
       file_removed <- file.remove(file_path)
     }
@@ -177,18 +167,6 @@ outliers <- function(input_data, outliers_to_remove = TRUE) {
     data <- data %>% filter(data[[col]] >= lower_bound & data[[col]] <= upper_bound)
   }
   
-  # Create and save boxplots without outliers
-  plot_without_outliers <- data %>%
-    select(where(is.numeric)) %>%
-    pivot_longer(cols = everything(), names_to = "Variable", values_to = "Value") %>%
-    ggplot(aes(x = "", y = Value)) +
-    geom_boxplot() +
-    facet_wrap(~ Variable, scales = "free_y") +
-    theme(axis.text.x = element_blank(), axis.ticks.x = element_blank()) +
-    labs(y = "Values", title = "Boxplots without outliers")
-  
-  ggsave("output/data-preprocessing/TO-REUBICATE-without-outliers-boxplot.pdf", plot_without_outliers, width = 10, height = 8)
-  
   return(data)
 }
 #data_outliers_treated <- outliers(data_with_temporal_feature, outliers_to_remove = FALSE) # c("AverageFee")
@@ -205,12 +183,6 @@ interaction_polynomial_feature <- function(input_data) {
 
   # Transaction volumes might vary by time of day differently on weekends versus weekdays
   data$Interaction_HourIsWeekend <- with(data, HourOfDay * IsWeekend)
-  # To examine if larger blocks, which can include more transactions and potentially higher fees,
-  # also correlate with higher average fees in a way that isn't linearly predictable from either
-  # block size or average fees alone.
-  # This could reflect situations where larger blocks are processed with priority due to higher fees
-  # being included, influencing the transaction count in those blocks differently than smaller blocks.
-  data$Interaction_BlockSizeAvgFee <- with(data, BlockSize_Lag1 * AverageFee_Lag1)
 
   # POLYNOMIAL FEATURES
 
@@ -220,53 +192,6 @@ interaction_polynomial_feature <- function(input_data) {
   # Quadratic or cubic terms for HourOfDay could capture morning rush, midday lull, and evening peaks
   data$HourOfDay_Squared <- with(data, HourOfDay^2)
   data$HourOfDay_Cubed <- with(data, HourOfDay^3)
-
-  # VISUALIZATION
-
-  # Define the function to create multiple scatter plots
-  plot_scatter_plots <- function(data, var_list) {
-    plots <- list()  # Initialize to store ggplot objects
-
-    for (var_name in var_list) {
-      p <- ggplot(data, aes(x = .data[[var_name]], y = .data[["TotalTransactions"]])) +
-        geom_point(alpha = 0.5) +
-        geom_smooth(method = "lm", color = "blue") +
-        labs(title = paste("Total Transactions vs.", var_name),
-             x = var_name,
-             y = "Total Transactions")
-
-      plots[[length(plots) + 1]] <- p  # Append plot to list
-    }
-
-    # Determine number of plots per page
-    plots_per_page <- 6  # 2x2 layout
-    page_number <- ceiling(length(plots) / plots_per_page)
-
-    # Open a PDF device
-    pdf("output/data-preprocessing/TO-REUBICATE-full_feature_engineered_scatter_plots.pdf", width = 20, height = 15)
-
-    for (i in seq_len(page_number)) {
-      # Subset plots for the current page
-      slice_start <- (i - 1) * plots_per_page + 1
-      slice_end <- min(i * plots_per_page, length(plots))
-      page_plots <- plots[slice_start:slice_end]
-      page_plots_layout <- do.call(patchwork::wrap_plots, c(page_plots, ncol = 3))
-
-      print(page_plots_layout)
-    }
-
-    # Close the PDF device
-    dev.off()
-  }
-
-  # Filter data to include only numeric columns
-  numeric_data <- select(data, where(is.numeric))
-
-  # Get the names of all numeric columns
-  numeric_columns <- names(numeric_data)
-
-  # Call the function with the list of variables you want to plot
-  plot_scatter_plots(data, numeric_columns)
 
   return(data)
 }

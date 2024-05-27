@@ -19,7 +19,7 @@ analyze_post_formatting <- function(data) {
   print(summary(data))
   sink()  # Stop diverting the output to the file
   
-  pdf(paste0(output_dir, "/0.2-post_formatting_histograms.pdf"))
+  pdf(paste0(output_dir, "/0.2-histograms_post_formatting.pdf"))
   
   # Histograms for all numeric columns
   p <- data %>%
@@ -46,7 +46,7 @@ analyze_post_missing_values <- function(data, data_before = NULL) {
   sink()  # Stop diverting the output to the file
   
   # Open PDF output
-  pdf(paste0(output_dir, "/1.2-post_missing_values_histograms.pdf"))
+  pdf(paste0(output_dir, "/1.2-histograms_post_missing_values.pdf"))
   
   # Plotting changes in distribution if 'data_before' is available
   if (!is.null(data_before)) {
@@ -77,7 +77,7 @@ analyze_post_missing_values <- function(data, data_before = NULL) {
 
 # Function to analyze Temporal Features
 analyze_temporal_features <- function(data, variables, target_var, log_transform = FALSE) {
-  
+
   # Open a text file for writing summary statistics
   sink(paste0(output_dir, "/2.1-data_summary_post_temporal_features.txt"))
   # Print the section title for column names in a clear format
@@ -89,53 +89,53 @@ analyze_temporal_features <- function(data, variables, target_var, log_transform
   cat("-----------------\n")
   print(summary(data))
   sink()  # Stop diverting the output to the file
-  
+
   # Define the output file name based on whether log transformation is applied
   file_name <- if (log_transform) {
-    "2.2-log_transformed_temporal_feature_analysis.pdf"
+    "2.2b-log_transformed_temporal_feature_analysis.pdf"
   } else {
-    "2.2-temporal_feature_analysis.pdf"
+    "2.2a-temporal_feature_analysis.pdf"
   }
-  
+
   # Open PDF output
   pdf(paste0(output_dir, "/", file_name))
-  
+
   # Iterate over each variable
   for (var in variables) {
     # Convert character variable name to symbol
     var_sym <- sym(var)
     lag_var_sym <- sym(paste(var, "Lag1", sep = "_"))
     target_var_sym <- sym(target_var)
-    
+
     # Ensure lagged column exists
     data[[paste(var, "Lag1", sep = "_")]] <- lag(data[[var]], 1)
-    
+
     # Apply log transformation if selected
     transform <- function(x) if (log_transform) log1p(x) else x
-    
+
     # Time series plot
     ts_plot <- ggplot(data, aes(x = Date, y = transform(!!var_sym))) +
       geom_line(color = "blue") +
       labs(title = paste(if (log_transform) "Log-Transformed" else "", "Time Series of", var),
            x = "Date", y = if (log_transform) paste("Log of", var) else var) +
       theme_minimal()
-    
+
     # Decomposition plot, only if no NAs
     if (all(!is.na(data[[var]]))) {
       ts_data <- ts(transform(data[[var]]), frequency = 24*6)  # Adjust frequency based on data's seasonality
       decomposed_ts <- stl(ts_data, s.window = "periodic")
-      decomposed_plot <- autoplot(decomposed_ts) + 
+      decomposed_plot <- autoplot(decomposed_ts) +
         ggtitle(paste(if (log_transform) "Log-Transformed" else "", "Decomposed Time Series of", var))
     } else {
-      decomposed_plot <- ggplot() + 
+      decomposed_plot <- ggplot() +
         geom_blank() +
         ggtitle(paste(if (log_transform) "Log-Transformed" else "", "Decomposed Time Series of", var, "Not Available - Missing Values"))
     }
-    
+
     # ACF plot
     acf_plot <- ggAcf(transform(data[[var]]), na.action = na.pass) +
       ggtitle(paste("ACF of", if (log_transform) "Log-Transformed" else "", var))
-    
+
     # Scatter plot of Variable vs. its Lagged version
     scatter_plot <- ggplot(data[-1,], aes(x = transform(!!lag_var_sym), y = transform(!!var_sym))) +
       geom_point(alpha = 0.5) +
@@ -144,52 +144,191 @@ analyze_temporal_features <- function(data, variables, target_var, log_transform
            x = if (log_transform) paste("Lagged Log of", var) else paste("Lagged", var),
            y = if (log_transform) paste("Log of", var) else var) +
       theme_minimal()
-    
+
     # Scatter plot of Variable vs. Target Variable
     correlation_plot <- ggplot(data, aes(x = data[[target_var_sym]], y = transform(!!var_sym))) +
       geom_point(alpha = 0.5, color = "green") +
       geom_smooth(method = "lm", color = "darkgreen") +
       labs(title = paste(if (log_transform) "Log of" else "", var, "vs.", target_var),
-           x = target_var, 
+           x = target_var,
            y = if (log_transform) paste("Log of", var) else var) +
       theme_minimal()
-    
+
     # Cross-Correlation Function (CCF) and plot
-    # Interpretation: e.g. positive correlation at a lag of 5 implies that a change first variable 
+    # Interpretation: e.g. positive correlation at a lag of 5 implies that a change first variable
     # significantly predict the movement in the second variable five time units later
     ccf_data <- ccf(transform(data[[var]]), data[[target_var_sym]], na.action = na.exclude, lag.max = 20, plot = FALSE)
     ccf_plot <- autoplot(ccf_data) +
       ggtitle(paste("Cross-Correlation Function of", var, "and", target_var))
-    
+
     # Print each set of plots on a new page including the CCF plot
     print(gridExtra::grid.arrange(ts_plot, decomposed_plot, acf_plot, scatter_plot, correlation_plot, ccf_plot, ncol = 2))
   }
-  
+
   # Close the PDF
   dev.off()
 }
-#analyze_temporal_features(data, c("TotalTransactions", "BlockSize", "AverageFee", "TotalFees"), target_var = "TotalTransactions", log_transform = FALSE)
 
-# Function to evaluate Outliers Treatment
-analyze_post_outliers <- function(data) {
-  pdf(paste0(output_dir, "/post_outliers_treatment.pdf"))
-
-  # Boxplots for numeric variables before and after treatment
-  # Similar structure as 'analyze_post_missing_values' if before and after data are available
-
+# Function to analyze Outliers
+analyze_outliers <- function(data_pre, data_post) {
+  # Open PDF output with specified width and height
+  pdf(paste0(output_dir, "/3.1a-boxplot_outliers_treatment_visual.pdf"), width = 12, height = 10)
+  # Open a text file for writing summary statistics
+  stats_file <- file(paste0(output_dir, "/3.1b-boxplot_outliers_summary_stats.txt"), open = "wt")
+  
+  # Identify numeric variables
+  numeric_vars <- sapply(data_pre, is.numeric)
+  
+  # Prepare data for plotting
+  data_pre_long <- reshape2::melt(data_pre[, numeric_vars], id.vars = NULL)
+  data_post_long <- reshape2::melt(data_post[, numeric_vars], id.vars = NULL)
+  
+  # Add a new 'Condition' column to differentiate the datasets
+  data_pre_long$Condition <- 'Before'
+  data_post_long$Condition <- 'After'
+  
+  # Combine the datasets
+  combined_data <- rbind(data_pre_long, data_post_long)
+  
+  # Reorder the Condition factor
+  combined_data$Condition <- factor(combined_data$Condition, levels = c("Before", "After"))
+  
+  # Calculate IQR and identify outliers for coloring
+  combined_data <- combined_data %>%
+    group_by(variable, Condition) %>%
+    mutate(
+      Q1 = quantile(value, probs = 0.25, na.rm = TRUE),
+      Q3 = quantile(value, probs = 0.75, na.rm = TRUE),
+      IQR = Q3 - Q1,
+      Lower = Q1 - 1.5 * IQR,
+      Upper = Q3 + 1.5 * IQR,
+      Outlier = ifelse(value < Lower | value > Upper, "Outlier", "Inlier")
+    ) %>%
+    ungroup()
+  
+  # Write summary statistics
+  writeLines("Summary Statistics for Numeric Variables:", stats_file)
+  for(variable in unique(combined_data$variable)) {
+    writeLines(paste("\nVariable:", variable), stats_file)
+    writeLines("Metric\tBefore\tAfter\t% Change", stats_file)
+    
+    before_data <- combined_data %>% filter(variable == variable, Condition == "Before")
+    after_data <- combined_data %>% filter(variable == variable, Condition == "After")
+    
+    before_stats <- summary(before_data$value)
+    after_stats <- summary(after_data$value)
+    
+    before_outliers_count <- sum(before_data$Outlier == "Outlier")
+    after_outliers_count <- sum(after_data$Outlier == "Outlier")
+    
+    metrics <- c("Min", "1st Qu.", "Median", "Mean", "3rd Qu.", "Max", "IQR", "Outliers", "Outliers (%)")
+    before_values <- c(before_stats[1], before_stats[2], before_stats[3], before_stats[4], before_stats[5], before_stats[6], before_data$IQR[1], before_outliers_count, (before_outliers_count / nrow(before_data)) * 100)
+    after_values <- c(after_stats[1], after_stats[2], after_stats[3], after_stats[4], after_stats[5], after_stats[6], after_data$IQR[1], after_outliers_count, (after_outliers_count / nrow(after_data)) * 100)
+    
+    for(i in seq_along(metrics)) {
+      change <- ((after_values[i] - before_values[i]) / before_values[i]) * 100
+      stats_text <- paste(metrics[i], before_values[i], after_values[i], round(change, 2), sep = "\t")
+      writeLines(stats_text, stats_file)
+    }
+    
+    # Calculate the percentage of outliers removed
+    removed_outliers <- before_outliers_count - after_outliers_count
+    percentage_removed <- (removed_outliers / before_outliers_count) * 100
+    writeLines(paste("Outliers removed:", removed_outliers, "\tPercentage removed:", round(percentage_removed, 2), "%"), stats_file)
+  }
+  
+  # Creating boxplots for all numeric variables, 6 plots per page
+  for (i in seq_len(ceiling(length(unique(combined_data$variable)) / 6))) {
+    vars_subset <- unique(combined_data$variable)[((i - 1) * 6 + 1):min(i * 6, length(unique(combined_data$variable)))]
+    data_subset <- combined_data %>% filter(variable %in% vars_subset)
+    
+    p <- ggplot(data_subset, aes(x = Condition, y = value, fill = Condition)) +
+      geom_boxplot(outlier.shape = NA, width = 0.6, position = position_dodge(width = 0.8), alpha = 0.5) +  # Added transparency to boxplots
+      geom_point(aes(color = Outlier, shape = Outlier), position = position_jitterdodge(jitter.width = 0.02, dodge.width = 0.8), size = 1.5, alpha = 0.5) +  # Added transparency to points
+      scale_color_manual(values = c("Outlier" = "orange", "Inlier" = "darkgray"), guide = guide_legend(override.aes = list(alpha = 1))) +  # Ensure legend colors are opaque
+      scale_shape_manual(values = c("Outlier" = 1, "Inlier" = 1)) +  # unfilled shapes
+      facet_wrap(~variable, scales = "free_y", ncol = 3) +
+      scale_fill_manual(values = c("Before" = "lightblue", "After" = "forestgreen"), guide = guide_legend(override.aes = list(alpha = 1))) +  # Ensure legend colors are opaque
+      theme_minimal() +
+      theme(
+        axis.text.x = element_text(angle = 45, hjust = 1),
+        legend.position = "bottom"
+      ) +
+      labs(
+        title = "Comparison of Numeric Variables Before and After Outliers Treatment",
+        x = "",
+        y = "Values",
+        subtitle = "Each plot corresponds to a different variable"
+      )
+    
+    # Print the plot to PDF
+    print(p)
+  }
+  
+  # Close the PDF and text file
   dev.off()
+  close(stats_file)
 }
 
 # Function to evaluate Interaction and Polynomial Features
-analyze_interaction_polynomial_features <- function(data) {
-  pdf(paste0(output_dir, "/interaction_polynomial_feature_analysis.pdf"))
-
-  # Scatter plots of interaction features against the target
-  ggplot(data, aes(x = Interaction_BlockSizeAvgFee, y = TotalTransactions)) +
-    geom_point() +
-    geom_smooth(method = "lm") +
-    labs(title = "Effect of Block Size and Average Fee Interaction on Transactions")
-
+analyze_interaction_polynomial_features <- function(data, target_var, feature_list) {
+  # Create the PDF for scatter plots
+  pdf(paste0(output_dir, "/4.1-scatter_plots_interaction_polynomial_features.pdf"), width = 20, height = 15)
+  
+  # Create scatter plots for each feature against the target variable
+  plots <- list()
+  for (feature in feature_list) {
+    p <- ggplot(data, aes(x = !!sym(feature), y = !!sym(target_var))) +
+      geom_point(alpha = 0.5) +
+      geom_smooth(method = "lm", color = "blue") +
+      labs(title = paste(target_var, "vs.", feature),
+           x = feature,
+           y = target_var) +
+      theme_minimal()
+    
+    plots[[length(plots) + 1]] <- p  # Add each plot to the list
+  }
+  
+  # Determine number of plots per page
+  plots_per_page <- 6  # 2x3 layout
+  page_number <- ceiling(length(plots) / plots_per_page)
+  
+  for (i in seq_len(page_number)) {
+    # Subset plots for the current page
+    slice_start <- (i - 1) * plots_per_page + 1
+    slice_end <- min(i * plots_per_page, length(plots))
+    page_plots <- plots[slice_start:slice_end]
+    page_plots_layout <- wrap_plots(page_plots, ncol = 3)
+    
+    print(page_plots_layout)
+  }
+  
+  # Close the PDF for scatter plots
+  dev.off()
+  
+  # Calculate the correlation matrix for the selected features with the target variable
+  relevant_features <- c(target_var, feature_list)
+  corr_matrix <- cor(data[relevant_features], use = "complete.obs")
+  
+  # Save the correlation matrix as a heatmap with correlation values
+  pdf(paste0(output_dir, "/4.2-heatmap_interaction_polynomial_features.pdf"), width = 12, height = 10)
+  
+  # Convert the correlation matrix to a long format for ggplot2
+  melted_corr <- melt(corr_matrix)
+  
+  heatmap <- ggplot(melted_corr, aes(x = Var1, y = Var2, fill = value)) +
+    geom_tile() +
+    geom_text(aes(label = round(value, 2)), color = "black", size = 3) +
+    scale_fill_gradient2(low = "blue", high = "forestgreen", mid = "white", midpoint = 0, limit = c(-1, 1), space = "Lab", name = "Correlation") +
+    theme_minimal() +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+    labs(title = paste("Correlation Heatmap of", target_var, "and Selected Features"),
+         x = "",
+         y = "")
+  
+  print(heatmap)
+  
+  # Close the PDF for correlation heatmap
   dev.off()
 }
 
@@ -204,6 +343,8 @@ analyze_encoding_effects <- function(data) {
 
   dev.off()
 }
+
+#HEATMAP
 
 # Function to perform Final Data Integrity Check
 final_data_integrity_check <- function(data) {

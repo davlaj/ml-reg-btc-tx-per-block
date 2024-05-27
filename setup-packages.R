@@ -17,4 +17,5 @@ pacman::p_load(httr,
                patchwork,
                corrplot,
                GGally,
-               forecast)
+               forecast,
+               reshape2)
