@@ -3,7 +3,7 @@
 # Load packages
 source("setup-packages.R")
 
-# Setup output directory
+# Output directory
 output_dir <- "output/exploratory-data-analysis"
 if (!dir.exists(output_dir)) {
   dir.create(output_dir, recursive = TRUE)
@@ -343,8 +343,6 @@ analyze_encoding_effects <- function(data) {
 
   dev.off()
 }
-
-#HEATMAP
 
 # Function to perform Final Data Integrity Check
 final_data_integrity_check <- function(data) {

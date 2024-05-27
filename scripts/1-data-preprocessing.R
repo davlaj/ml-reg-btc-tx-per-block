@@ -7,15 +7,7 @@ source("scripts/1-exploratory-data-analysis.R")
 # Load data 
 raw_data <- read.csv("data/raw/block_data.csv")
 
-#################
-# 0. Formatting #
-#################
-
-# Includes:
-# Removing duplicates
-# Correcting errors and inconsistencies (e.g., fixing typos, standardizing formats)
-# Ensuring data types are correct (e.g., converting strings to integers)
-
+# 0.Formatting
 formatting <- function (input_file){
   
   data <- input_file
@@ -31,10 +23,7 @@ formatting <- function (input_file){
 #data_formatted <- formatting(raw_data)
 #analyze_post_formatting(data_formatted)
 
-####################
-# 1.Missing Values # 
-####################
-
+# 1.Missing Values 
 missing_values <- function (input_data){
   
   data <- input_data
@@ -61,13 +50,10 @@ missing_values <- function (input_data){
 #data_without_missing_values <- missing_values(data_formatted)
 #analyze_post_missing_values(data_without_missing_values, data_before = data_formatted)
 
-##################################
-# 2.Temporal Feature Engineering #
-##################################
-# To avoid introducing inaccuracies or distortions in temporal calculations, which can occur due to gaps
-# in the data after the removal of outliers and would create new outliers
-
+# 2.Temporal Feature Engineering 
 temporal_feature <- function(input_data) {
+  # To avoid introducing inaccuracies or distortions in temporal calculations, which can occur due to gaps
+  # in the data after the removal of outliers and would create new outliers
 
   data <- input_data
     
@@ -122,10 +108,7 @@ temporal_feature <- function(input_data) {
 #data_with_temporal_feature <- temporal_feature(data_without_missing_values)
 #analyze_temporal_features(data_with_temporal_feature, c("TotalTransactions", "BlockSize", "AverageFee", "TotalFees"), log_transform = FALSE)
 
-##############
-# 3.Outliers #
-##############
-
+# 3.Outliers 
 outliers <- function(input_data, outliers_to_remove = TRUE) {
   
   data <- input_data
@@ -171,10 +154,7 @@ outliers <- function(input_data, outliers_to_remove = TRUE) {
 }
 #data_outliers_treated <- outliers(data_with_temporal_feature, outliers_to_remove = FALSE) # c("AverageFee")
 
-####################################################
-# 4.Interaction and Polynomial Feature Engineering #
-####################################################
-
+# 4.Interaction and Polynomial Feature Engineering 
 interaction_polynomial_feature <- function(input_data) {
 
   data <- input_data
@@ -197,13 +177,9 @@ interaction_polynomial_feature <- function(input_data) {
 }
 #data_full_feature_engineered <- interaction_polynomial_feature(data_outliers_treated)
 
-##############
 # 5.Encoding # Apply to categorical variables
-##############
-
-# WHICH ALGORITHMS NEED ENCODING?
-
 encoding <- function(input_data) {
+  # WHICH ALGORITHMS NEED ENCODING?
   
   data <- input_data
 
