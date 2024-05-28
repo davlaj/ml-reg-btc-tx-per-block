@@ -80,6 +80,8 @@ source("run-pipeline.R")
 
 This will execute the entire data analysis and modeling pipeline, generating the necessary output files in the `output/` directory.
 
+Additionally, it is possible to run each script independently or execute specific parts of a script by manually managing the dependencies.
+
 ### Output
 The results of the analysis and modeling are stored in the output/ directory. This includes visualizations, summary statistics, and model performance metrics.
 
