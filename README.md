@@ -1,15 +1,16 @@
 # Bitcoin Transaction per Block Analysis
 
-This repository contains the code and data for the analysis and modeling of Bitcoin transactions per block. The project is structured to follow a comprehensive data analysis and machine learning pipeline using `targets` in R.
+This repository contains the code and data for modeling Bitcoin transactions per block. The goal is to predict the number of transactions in the next Bitcoin block. The project is structured to follow a comprehensive data analysis and machine learning pipeline using the `targets` package in R.
 
 ## Repository Structure
 
-- `/_targets/` - Directory for 'targets' package outputs
-  - `_targets.R` - Main targets pipeline script
+- `_targets.R` - Main targets pipeline script
 - `/.gitignore` - Git ignore file
 - `/data/` - Directory for raw and processed data
 - `/docs/` - Documentation files
 - `/output/` - Directory for output files
+  - `exploratory-data-analysis/` - Contains outputs from exploratory data analysis, including visualizations and statistics
+  - `model-evaluation/` - Contains output files from the evaluation of different models, including performance metrics and model comparisons
 - `/scripts/` - Directory for R scripts
   - `0-data-raw-extraction.R` - Script for raw data extraction
   - `1-data-preprocessing.R` - Script for data preprocessing
