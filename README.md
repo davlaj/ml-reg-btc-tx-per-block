@@ -62,13 +62,13 @@ source("run-pipeline.R")
 - **0-data-raw-extraction.R**: Extract raw data from the Bitcoin node.
 - **1-data-preprocessing.R**: Preprocess the extracted data.
   - Preprocessing steps:
-      0. Formatting
-      1. Missing Values
-      2. Temporal Feature Engineering
-      3. Outliers
-      4. Interaction and Polynomial Feature Engineering
-      5. Encoding
-      6. Data Integrity Checks
+      - 0\. Formatting
+      - 1\. Missing Values
+      - 2\. Temporal Feature Engineering
+      - 3\. Outliers
+      - 4\. Interaction and Polynomial Feature Engineering
+      - 5\. Encoding
+      - 6\. Data Integrity Checks
 - **1-exploratory-data-analysis.R**: Perform exploratory data analysis.
   - Output files are numbered according to the preprocessing steps
 - **2-model-evaluation.R**: Evaluate models on the preprocessed data.
