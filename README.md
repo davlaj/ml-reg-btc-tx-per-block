@@ -9,8 +9,8 @@ This repository contains the code and data for modeling Bitcoin transactions per
 - `/data/` - Directory for raw and processed data
 - `/docs/` - Documentation files
 - `/output/` - Directory for output files
-  - `exploratory-data-analysis/` - Contains outputs from `1-exploratory-data-analysis.R`, including visualizations and statistics
-  - `model-evaluation/` - Contains output files from `2-model-evaluation.R`, including performance metrics and model comparisons
+  - `exploratory-data-analysis/` - Contains outputs from `/scripts/1-exploratory-data-analysis.R`, including visualizations and statistics
+  - `model-evaluation/` - Contains output files from `/scripts/2-model-evaluation.R`, including performance metrics and model comparisons
 - `/scripts/` - Directory for R scripts
   - `0-data-raw-extraction.R` - Script for raw data extraction
   - `1-data-preprocessing.R` - Script for data preprocessing
