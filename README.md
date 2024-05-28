@@ -1,15 +1,16 @@
 # Bitcoin Transaction per Block Analysis
 
-This repository contains the code and data for the analysis and modeling of Bitcoin transactions per block. The project is structured to follow a comprehensive data analysis and machine learning pipeline using `targets` in R.
+This repository contains the code and data for modeling Bitcoin transactions per block. The goal is to predict the number of transactions in the next Bitcoin block. The project is structured to follow a comprehensive data analysis and machine learning pipeline using the `targets` package in R.
 
 ## Repository Structure
 
-- `/_targets/` - Directory for 'targets' package outputs
-  - `_targets.R` - Main targets pipeline script
+- `_targets.R` - Main targets pipeline script
 - `/.gitignore` - Git ignore file
 - `/data/` - Directory for raw and processed data
 - `/docs/` - Documentation files
 - `/output/` - Directory for output files
+  - `exploratory-data-analysis/` - Contains outputs from exploratory data analysis, including visualizations and statistics
+  - `model-evaluation/` - Contains output files from the evaluation of different models, including performance metrics and model comparisons
 - `/scripts/` - Directory for R scripts
   - `0-data-raw-extraction.R` - Script for raw data extraction
   - `1-data-preprocessing.R` - Script for data preprocessing
@@ -60,7 +61,16 @@ source("run-pipeline.R")
 
 - **0-data-raw-extraction.R**: Extract raw data from the Bitcoin node.
 - **1-data-preprocessing.R**: Preprocess the extracted data.
+  - Preprocessing steps:
+      - 0\. Formatting
+      - 1\. Missing Values
+      - 2\. Temporal Feature Engineering
+      - 3\. Outliers
+      - 4\. Interaction and Polynomial Feature Engineering
+      - 5\. Encoding
+      - 6\. Data Integrity Checks
 - **1-exploratory-data-analysis.R**: Perform exploratory data analysis.
+  - Output files are numbered according to the preprocessing steps
 - **2-model-evaluation.R**: Evaluate models on the preprocessed data.
 - **run-pipeline.R**: Run the entire data analysis and modeling pipeline.
 - **setup-packages.R**: Script to install and load required packages.
@@ -78,6 +88,8 @@ source("run-pipeline.R")
     ```
 
 This will execute the entire data analysis and modeling pipeline, generating the necessary output files in the `output/` directory.
+
+Additionally, it is possible to run each script independently or execute specific parts of a script by manually managing the dependencies.
 
 ### Output
 The results of the analysis and modeling are stored in the output/ directory. This includes visualizations, summary statistics, and model performance metrics.
