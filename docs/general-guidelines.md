@@ -15,7 +15,7 @@
 | Neural Networks (NN)     | Yes            | Yes             | Yes                     | No (But other regularization methods like dropout are used) | Yes | Yes        |
 | Principal Component Analysis (PCA) | Yes | Yes             | No                      | No                                     | No         | No             |
 
-## Recommended Metrics by Models
+## Recommended Metrics by Model
 
 | Model                    | MAE | MSE | RMSE | R² | Adjusted R² | Accuracy | Precision | Recall | F1 Score | Gini |
 |--------------------------|-----|-----|------|----|-------------|----------|-----------|--------|----------|------|
