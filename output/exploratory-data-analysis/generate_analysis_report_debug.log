@@ -1,0 +1,10 @@
+Starting generate_analysis_report 
+Correlation matrix RDS file: output/exploratory-data-analysis/.5.1-encoding_effects_corr_matrix.rds 
+PCA summary RDS file: output/exploratory-data-analysis/.5.1-encoding_effects_pca_summary.rds 
+Correlation matrix successfully read. 
+PCA summary successfully read. 
+Generating correlation matrix plot. 
+Generating correlation with target variable plot. 
+Displaying PCA summary. 
+Generating decision suggestions. 
+Analysis report generated successfully. 

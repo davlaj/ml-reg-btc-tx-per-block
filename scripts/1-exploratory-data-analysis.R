@@ -332,16 +332,207 @@ analyze_interaction_polynomial_features <- function(data, target_var, feature_li
   dev.off()
 }
 
-# Function to analyze Encoding Effects
+# Function to evaluate Encoding Effects
 analyze_encoding_effects <- function(data) {
-  pdf(paste0(output_dir, "/encoding_effects_analysis.pdf"))
+  # Set up the output files
+  pdf_path <- paste0(output_dir, "/5.1-encoding_effects_analysis.pdf")
+  txt_path <- paste0(output_dir, "/5.1-encoding_effects_analysis_details.txt")
+  corr_matrix_rds_path <- paste0(output_dir, "/.5.1-encoding_effects_corr_matrix.rds")
+  pca_summary_rds_path <- paste0(output_dir, "/.5.1-encoding_effects_pca_summary.rds")
 
-  # Correlation matrix including new dummy variables
+  cat("Starting analyze_encoding_effects function\n")
+  cat("Output files set up\n")
+
+  # Open a PDF device for plots
+  pdf(pdf_path, width = 12, height = 10)
+
+  # Open a connection to a text file for diagnostic outputs
+  txt_con <- file(txt_path, open = "wt")
+
+  cat("PDF and text connections opened\n")
+
+  # Filter numeric data
   data_numeric <- data %>% select(where(is.numeric))
-  corr_matrix <- cor(data_numeric)
-  corrplot(corr_matrix, method = "circle")
 
+  # Scale the data
+  data_scaled <- scale(data_numeric)
+
+  cat("Data scaled\n")
+
+  # Compute the correlation matrix
+  corr_matrix <- cor(data_scaled, use = "pairwise.complete.obs")
+
+  cat("Correlation matrix computed\n")
+
+  # Print the correlation matrix to the text file and save as RDS
+  writeLines("Correlation Matrix:\n", txt_con)
+  capture.output(print(corr_matrix), file = txt_con, append = TRUE)
+  saveRDS(corr_matrix, corr_matrix_rds_path)
+
+  cat("Correlation matrix saved to RDS\n")
+
+  # Plotting the correlation matrix
+  corrplot(corr_matrix, method = "circle", type = "lower", order = "hclust",
+           tl.col = "black", tl.srt = 45)
+
+  # Perform PCA and plot the results
+  pca_result <- prcomp(data_scaled, scale. = TRUE)
+  plot(pca_result, type = "lines", main = "PCA Scree Plot")
+  biplot(pca_result, main = "PCA Biplot", cex = 0.7)
+
+  cat("PCA performed and plotted\n")
+
+  # Print PCA summary to the text file and save as RDS
+  writeLines("\nPCA Summary:\n", txt_con)
+  pca_summary <- summary(pca_result)
+  capture.output(pca_summary, file = txt_con, append = TRUE)
+  saveRDS(pca_summary, pca_summary_rds_path)
+
+  cat("PCA summary saved to RDS\n")
+
+  # Close the PDF and text file
   dev.off()
+  close(txt_con)
+
+  cat("PDF and text connections closed\n")
+}
+
+
+generate_analysis_report <- function(data) {
+  log_file <- paste0(output_dir, "/generate_analysis_report_debug.log")
+  log_con <- file(log_file, open = "wt")
+  
+  log <- function(message) {
+    cat(message, "\n", file = log_con, append = TRUE)
+  }
+  
+  log("Starting generate_analysis_report")
+  
+  # Paths to the input files
+  corr_matrix_rds_path <- paste0(output_dir, "/.5.1-encoding_effects_corr_matrix.rds")
+  pca_summary_rds_path <- paste0(output_dir, "/.5.1-encoding_effects_pca_summary.rds")
+  
+  log(paste("Correlation matrix RDS file:", corr_matrix_rds_path))
+  log(paste("PCA summary RDS file:", pca_summary_rds_path))
+  
+  # Check if the correlation matrix file exists
+  if (!file.exists(corr_matrix_rds_path)) {
+    log("Error: Correlation matrix file does not exist.")
+    stop("Error: Correlation matrix file does not exist.")
+  }
+  
+  # Check if the PCA summary file exists
+  if (!file.exists(pca_summary_rds_path)) {
+    log("Error: PCA summary file does not exist.")
+    stop("Error: PCA summary file does not exist.")
+  }
+  
+  # Read the correlation matrix and PCA summary from RDS files
+  tryCatch({
+    corr_matrix <- readRDS(corr_matrix_rds_path)
+    log("Correlation matrix successfully read.")
+  }, error = function(e) {
+    log(paste("Error reading correlation matrix:", e$message))
+    stop("Failed to read the correlation matrix: ", e$message)
+  })
+  
+  tryCatch({
+    pca_summary <- readRDS(pca_summary_rds_path)
+    log("PCA summary successfully read.")
+  }, error = function(e) {
+    log(paste("Error reading PCA summary:", e$message))
+    stop("Failed to read the PCA summary: ", e$message)
+  })
+  
+  # Open PDF output for the report
+  pdf_path <- paste0(output_dir, "/analysis_report.pdf")
+  pdf(pdf_path, width = 12, height = 10)
+  
+  log("Generating correlation matrix plot.")
+  
+  # Analysis of the Correlation Matrix
+  corrplot(corr_matrix, 
+           method = "circle", 
+           type = "lower", 
+           title = "Correlation Matrix", 
+           mar = c(0, 0, 2, 0), 
+           tl.cex = 0.8,       # Adjust text size
+           tl.col = "black",   # Text color
+           tl.srt = 45,        # Rotate text
+           number.cex = 0.5)   # Size of correlation coefficients
+  
+  # Analyze correlation with the target variable
+  target_var <- "TotalTransactions"
+  corr_with_target <- sort(corr_matrix[target_var, ], decreasing = TRUE)
+  corr_with_target <- corr_with_target[!names(corr_with_target) %in% target_var]
+  
+  log("Generating correlation with target variable plot.")
+  
+  # Plot correlation with the target variable
+  corr_plot <- ggplot(data = data.frame(Variable = names(corr_with_target), Correlation = corr_with_target),
+                      aes(x = reorder(Variable, Correlation), y = Correlation)) +
+    geom_bar(stat = "identity", fill = "steelblue") +
+    coord_flip() +
+    labs(title = paste("Correlation with", target_var), x = "Variables", y = "Correlation")
+  
+  print(corr_plot)
+  
+  log("Displaying PCA summary.")
+  
+  # Display PCA summary as text
+  grid.newpage()
+  pushViewport(viewport(layout = grid.layout(1, 1)))
+  grid.text("PCA Summary", x = 0.5, y = 0.9, gp = gpar(fontsize = 20))
+  
+  pca_summary_text <- capture.output(print(pca_summary))
+  pca_summary_text <- paste(pca_summary_text, collapse = "\n")
+  grid.text(pca_summary_text, x = 0.5, y = 0.5, just = "center", gp = gpar(fontsize = 10))
+  
+  log("Generating decision suggestions.")
+  
+  # Decision Suggestions based on Correlation Analysis
+  decision_text <- capture.output({
+    cat("### Decision Suggestions based on Correlation Analysis\n\n")
+    cat("1. **Features with High Correlation**: \n")
+    high_corr_features <- names(corr_with_target[abs(corr_with_target) > 0.3])
+    if (length(high_corr_features) > 0) {
+      cat("Consider using the following features in your model as they show a significant correlation with the target variable:\n")
+      cat(paste0("- ", high_corr_features, "\n"), sep = "")
+    } else {
+      cat("No features show a significant correlation (above 0.3) with the target variable.\n")
+    }
+    
+    cat("\n2. **Features with Moderate Correlation**: \n")
+    moderate_corr_features <- names(corr_with_target[abs(corr_with_target) > 0.1 & abs(corr_with_target) <= 0.3])
+    if (length(moderate_corr_features) > 0) {
+      cat("Consider using the following features with caution, as they show moderate correlation with the target variable:\n")
+      cat(paste0("- ", moderate_corr_features, "\n"), sep = "")
+    } else {
+      cat("No features show moderate correlation (between 0.1 and 0.3) with the target variable.\n")
+    }
+    
+    cat("\n### Decision Suggestions based on PCA Analysis\n\n")
+    cat("3. **Principal Components**: \n")
+    cat("Consider the principal components that explain the majority of the variance. Use these components to reduce dimensionality if needed.\n")
+  })
+  
+  decision_text <- paste(decision_text, collapse = "\n")
+  
+  # Print the decision suggestions
+  grid.newpage()
+  pushViewport(viewport(layout = grid.layout(1, 1)))
+  grid.text("Decision Suggestions", x = 0.5, y = 0.9, gp = gpar(fontsize = 20))
+  grid.text(decision_text, x = 0.5, y = 0.5, just = "center", gp = gpar(fontsize = 10))
+  
+  # Close the PDF
+  dev.off()
+  
+  log("Analysis report generated successfully.")
+  
+  close(log_con)
+  
+  # Return the path to the generated PDF
+  return(pdf_path)
 }
 
 # Function to perform Final Data Integrity Check

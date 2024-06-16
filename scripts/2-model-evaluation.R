@@ -29,7 +29,7 @@ test_set <- data[-training_rows[[1]], ]
 # 2.Dimension Reduction #
 #########################
 
-# PCA, Heatmaps, t-SNE plots, Multidimensional Scaling (MDS) plots
+# PCA (have to scale/standardize before), Heatmaps, t-SNE plots, Multidimensional Scaling (MDS) plots
 
 #############
 # 3.Scaling # Apply to continuous numeric non-categorical variables

@@ -1,0 +1,488 @@
+Correlation Matrix:
+
+                                AverageFee   BlockNumber   BlockSize
+AverageFee                     1.000000000 -0.0892922417 -0.07831954
+BlockNumber                   -0.089292242  1.0000000000 -0.13525394
+BlockSize                     -0.078319541 -0.1352539394  1.00000000
+TotalTransactions             -0.192088020  0.2736919371 -0.16547296
+TotalFees                      0.819096694  0.0441609954 -0.16184223
+Difficulty                    -0.029413373  0.8935630347 -0.13214187
+TimeDiffMinutes                0.231336642  0.0078092585 -0.31631558
+HourOfDay                      0.093642634  0.0005850786 -0.04382983
+DayOfWeek                      0.012151487 -0.0801128131 -0.07713740
+IsWeekend                     -0.132521401 -0.0252688441  0.03284524
+TotalFeesLog                   0.816573778  0.0418073793 -0.17226705
+TotalTransactions_Lag1        -0.025469890  0.2715592733 -0.10700497
+BlockSize_Lag1                 0.038275414 -0.1377201426  0.35427876
+TotalFees_Lag1                 0.630453757  0.0465420715 -0.05962013
+TotalFeesLog_Lag1              0.633403506  0.0441665178 -0.06550182
+TotalTransactions_RunningAvg2 -0.007923585  0.3288299429 -0.11733871
+TotalTransactions_RunningAvg3  0.011073150  0.3632219683 -0.11905572
+BlockSize_RunningAvg2          0.037239770 -0.1571809633  0.38336481
+BlockSize_RunningAvg3          0.032961024 -0.1617212340  0.38968964
+TotalFees_RunningAvg2          0.679944864  0.0585741056 -0.05015002
+TotalFees_RunningAvg3          0.693978681  0.0654392782 -0.03988144
+TotalFeesLog_RunningAvg2       0.680440013  0.0550418657 -0.05638663
+TotalFeesLog_RunningAvg3       0.693914549  0.0612234505 -0.04612360
+Interaction_HourIsWeekend     -0.095970034 -0.0313417743  0.05298486
+BlockSize_Squared              0.039516630 -0.1318162341  0.35193426
+BlockSize_Cubed                0.040388715 -0.1253123702  0.34812486
+HourOfDay_Squared              0.103351991  0.0046027470 -0.02985365
+HourOfDay_Cubed                0.104387547  0.0063869995 -0.01761508
+hour_sin                      -0.090797436 -0.0055960316  0.05198294
+hour_cos                       0.051579587  0.0271191124  0.05756058
+day_sin                       -0.057259925  0.0922830674  0.08134695
+day_cos                       -0.100758893 -0.0853790934 -0.01128979
+                              TotalTransactions    TotalFees   Difficulty
+AverageFee                         -0.192088020  0.819096694 -0.029413373
+BlockNumber                         0.273691937  0.044160995  0.893563035
+BlockSize                          -0.165472965 -0.161842226 -0.132141873
+TotalTransactions                   1.000000000  0.342394646  0.245346436
+TotalFees                           0.342394646  1.000000000  0.099267261
+Difficulty                          0.245346436  0.099267261  1.000000000
+TimeDiffMinutes                     0.283660133  0.411879421  0.013538512
+HourOfDay                           0.027779456  0.105656449 -0.003279971
+DayOfWeek                          -0.022477781  0.001252008 -0.046720741
+IsWeekend                          -0.008389574 -0.125549700 -0.005623063
+TotalFeesLog                        0.352108927  0.997663028  0.098333014
+TotalTransactions_Lag1              0.413258945  0.190981043  0.243915196
+BlockSize_Lag1                     -0.137959962 -0.032175050 -0.133829569
+TotalFees_Lag1                      0.222321655  0.729569247  0.101765209
+TotalFeesLog_Lag1                   0.226729939  0.733039729  0.100663138
+TotalTransactions_RunningAvg2       0.452774430  0.225592490  0.294789703
+TotalTransactions_RunningAvg3       0.469230952  0.248806382  0.325904585
+BlockSize_RunningAvg2              -0.160161506 -0.044074571 -0.153238030
+BlockSize_RunningAvg3              -0.163134599 -0.047037616 -0.159558564
+TotalFees_RunningAvg2               0.223746370  0.775120620  0.117308267
+TotalFees_RunningAvg3               0.220284379  0.786288319  0.125399878
+TotalFeesLog_RunningAvg2            0.227445889  0.776045782  0.115060221
+TotalFeesLog_RunningAvg3            0.224076213  0.786511696  0.122469753
+Interaction_HourIsWeekend          -0.014633882 -0.092831531 -0.015141754
+BlockSize_Squared                  -0.138351728 -0.031855123 -0.128930264
+BlockSize_Cubed                    -0.137732110 -0.031261740 -0.123311468
+HourOfDay_Squared                  -0.001550502  0.096459649  0.001474209
+HourOfDay_Cubed                    -0.020743006  0.085013720  0.004531741
+hour_sin                           -0.025369566 -0.105415024  0.004616187
+hour_cos                           -0.108613825 -0.019871768  0.025865701
+day_sin                             0.017616499 -0.048021570  0.045972600
+day_cos                            -0.023776154 -0.101077578 -0.032576024
+                              TimeDiffMinutes     HourOfDay     DayOfWeek
+AverageFee                       0.2313366422  0.0936426336  0.0121514870
+BlockNumber                      0.0078092585  0.0005850786 -0.0801128131
+BlockSize                       -0.3163155800 -0.0438298309 -0.0771374005
+TotalTransactions                0.2836601327  0.0277794557 -0.0224777805
+TotalFees                        0.4118794212  0.1056564493  0.0012520085
+Difficulty                       0.0135385119 -0.0032799709 -0.0467207414
+TimeDiffMinutes                  1.0000000000 -0.0157413741  0.0209560726
+HourOfDay                       -0.0157413741  1.0000000000 -0.0005153687
+DayOfWeek                        0.0209560726 -0.0005153687  1.0000000000
+IsWeekend                       -0.0075826590  0.0046687758  0.0272492869
+TotalFeesLog                     0.4152993996  0.1100810972  0.0021627311
+TotalTransactions_Lag1          -0.0369538569  0.0425592258 -0.0240730549
+BlockSize_Lag1                   0.0106501516 -0.0477101991 -0.0685894248
+TotalFees_Lag1                  -0.0582344191  0.1124772906  0.0024449149
+TotalFeesLog_Lag1               -0.0572199976  0.1153723839  0.0035461256
+TotalTransactions_RunningAvg2   -0.0520437815  0.0536007571 -0.0308360596
+TotalTransactions_RunningAvg3   -0.0489831791  0.0580381412 -0.0315495980
+BlockSize_RunningAvg2           -0.0080543285 -0.0609286777 -0.0861558011
+BlockSize_RunningAvg3           -0.0055088064 -0.0734222226 -0.1009673277
+TotalFees_RunningAvg2           -0.0614326707  0.1252054886 -0.0003980527
+TotalFees_RunningAvg3           -0.0642904306  0.1304018312  0.0013957533
+TotalFeesLog_RunningAvg2        -0.0603088893  0.1277239294  0.0013746085
+TotalFeesLog_RunningAvg3        -0.0630363477  0.1326639079  0.0028434981
+Interaction_HourIsWeekend       -0.0107772874  0.3134231389  0.0229339062
+BlockSize_Squared                0.0122168809 -0.0482898362 -0.0664367350
+BlockSize_Cubed                  0.0135282168 -0.0483882595 -0.0638926351
+HourOfDay_Squared               -0.0148719866  0.9660345100  0.0050238853
+HourOfDay_Cubed                 -0.0130852508  0.9125064497  0.0085741891
+hour_sin                         0.0183358084 -0.7890836830  0.0001121354
+hour_cos                        -0.0013134256 -0.0952891676  0.0235872923
+day_sin                         -0.0135660819  0.0077267265 -0.7299267560
+day_cos                          0.0004016873 -0.0035375960  0.3895292811
+                                 IsWeekend TotalFeesLog TotalTransactions_Lag1
+AverageFee                    -0.132521401  0.816573778           -0.025469890
+BlockNumber                   -0.025268844  0.041807379            0.271559273
+BlockSize                      0.032845238 -0.172267054           -0.107004969
+TotalTransactions             -0.008389574  0.352108927            0.413258945
+TotalFees                     -0.125549700  0.997663028            0.190981043
+Difficulty                    -0.005623063  0.098333014            0.243915196
+TimeDiffMinutes               -0.007582659  0.415299400           -0.036953857
+HourOfDay                      0.004668776  0.110081097            0.042559226
+DayOfWeek                      0.027249287  0.002162731           -0.024073055
+IsWeekend                      1.000000000 -0.131435288           -0.011036769
+TotalFeesLog                  -0.131435288  1.000000000            0.197240578
+TotalTransactions_Lag1        -0.011036769  0.197240578            1.000000000
+BlockSize_Lag1                 0.027900366 -0.040699406           -0.167572405
+TotalFees_Lag1                -0.123073621  0.738661729            0.333420447
+TotalFeesLog_Lag1             -0.128377506  0.743837576            0.343708677
+TotalTransactions_RunningAvg2 -0.017869847  0.231646773            0.794881156
+TotalTransactions_RunningAvg3 -0.017746571  0.255291861            0.697376814
+BlockSize_RunningAvg2          0.029861748 -0.053445494           -0.184524442
+BlockSize_RunningAvg3          0.025747945 -0.056685320           -0.180766534
+TotalFees_RunningAvg2         -0.128930064  0.783895742            0.288123774
+TotalFees_RunningAvg3         -0.130593464  0.794718858            0.264601747
+TotalFeesLog_RunningAvg2      -0.134807523  0.786625031            0.295245667
+TotalFeesLog_RunningAvg3      -0.136629276  0.796801373            0.270157306
+Interaction_HourIsWeekend      0.819814776 -0.098592202           -0.009683628
+BlockSize_Squared              0.030257348 -0.040368026           -0.181923333
+BlockSize_Cubed                0.032139490 -0.039717441           -0.193656851
+HourOfDay_Squared              0.009180906  0.100859523            0.013516950
+HourOfDay_Cubed                0.008849029  0.089020192           -0.006746970
+hour_sin                      -0.025423290 -0.110936098           -0.042194935
+hour_cos                       0.017749018 -0.020271210           -0.109981717
+day_sin                        0.340955672 -0.050371388            0.016467315
+day_cos                        0.717043407 -0.106003333           -0.025322087
+                              BlockSize_Lag1 TotalFees_Lag1 TotalFeesLog_Lag1
+AverageFee                        0.03827541    0.630453757       0.633403506
+BlockNumber                      -0.13772014    0.046542071       0.044166518
+BlockSize                         0.35427876   -0.059620126      -0.065501817
+TotalTransactions                -0.13795996    0.222321655       0.226729939
+TotalFees                        -0.03217505    0.729569247       0.733039729
+Difficulty                       -0.13382957    0.101765209       0.100663138
+TimeDiffMinutes                   0.01065015   -0.058234419      -0.057219998
+HourOfDay                        -0.04771020    0.112477291       0.115372384
+DayOfWeek                        -0.06858942    0.002444915       0.003546126
+IsWeekend                         0.02790037   -0.123073621      -0.128377506
+TotalFeesLog                     -0.04069941    0.738661729       0.743837576
+TotalTransactions_Lag1           -0.16757241    0.333420447       0.343708677
+BlockSize_Lag1                    1.00000000   -0.190347561      -0.200196240
+TotalFees_Lag1                   -0.19034756    1.000000000       0.997895014
+TotalFeesLog_Lag1                -0.20019624    0.997895014       1.000000000
+TotalTransactions_RunningAvg2    -0.15269432    0.302734110       0.311353968
+TotalTransactions_RunningAvg3    -0.14284364    0.293886172       0.301392903
+BlockSize_RunningAvg2             0.77491768   -0.139406196      -0.149998585
+BlockSize_RunningAvg3             0.66468986   -0.117398174      -0.127130698
+TotalFees_RunningAvg2            -0.12040715    0.915822481       0.919208897
+TotalFees_RunningAvg3            -0.08689497    0.880049147       0.884392715
+TotalFeesLog_RunningAvg2         -0.12841134    0.914596572       0.920932008
+TotalFeesLog_RunningAvg3         -0.09433955    0.879035909       0.885932618
+Interaction_HourIsWeekend         0.04542589   -0.091024750      -0.096141635
+BlockSize_Squared                 0.99783556   -0.193110835      -0.203155994
+BlockSize_Cubed                   0.99166014   -0.194165050      -0.204327414
+HourOfDay_Squared                -0.03764176    0.105571506       0.108565130
+HourOfDay_Cubed                  -0.02755624    0.095477979       0.098135888
+hour_sin                          0.05727923   -0.108933426      -0.113872184
+hour_cos                          0.04378734   -0.012741045      -0.012746804
+day_sin                           0.07432904   -0.049347230      -0.051750532
+day_cos                          -0.01376321   -0.097178882      -0.101857738
+                              TotalTransactions_RunningAvg2
+AverageFee                                     -0.007923585
+BlockNumber                                     0.328829943
+BlockSize                                      -0.117338706
+TotalTransactions                               0.452774430
+TotalFees                                       0.225592490
+Difficulty                                      0.294789703
+TimeDiffMinutes                                -0.052043781
+HourOfDay                                       0.053600757
+DayOfWeek                                      -0.030836060
+IsWeekend                                      -0.017869847
+TotalFeesLog                                    0.231646773
+TotalTransactions_Lag1                          0.794881156
+BlockSize_Lag1                                 -0.152694315
+TotalFees_Lag1                                  0.302734110
+TotalFeesLog_Lag1                               0.311353968
+TotalTransactions_RunningAvg2                   1.000000000
+TotalTransactions_RunningAvg3                   0.901127325
+BlockSize_RunningAvg2                          -0.199138415
+BlockSize_RunningAvg3                          -0.211667336
+TotalFees_RunningAvg2                           0.348193882
+TotalFees_RunningAvg3                           0.331580829
+TotalFeesLog_RunningAvg2                        0.357442138
+TotalFeesLog_RunningAvg3                        0.339438342
+Interaction_HourIsWeekend                      -0.016137015
+BlockSize_Squared                              -0.161569459
+BlockSize_Cubed                                -0.168552904
+HourOfDay_Squared                               0.021413877
+HourOfDay_Cubed                                -0.001434668
+hour_sin                                       -0.053714826
+hour_cos                                       -0.120984010
+day_sin                                         0.022435128
+day_cos                                        -0.034013077
+                              TotalTransactions_RunningAvg3
+AverageFee                                     0.0110731503
+BlockNumber                                    0.3632219683
+BlockSize                                     -0.1190557184
+TotalTransactions                              0.4692309521
+TotalFees                                      0.2488063822
+Difficulty                                     0.3259045854
+TimeDiffMinutes                               -0.0489831791
+HourOfDay                                      0.0580381412
+DayOfWeek                                     -0.0315495980
+IsWeekend                                     -0.0177465709
+TotalFeesLog                                   0.2552918609
+TotalTransactions_Lag1                         0.6973768144
+BlockSize_Lag1                                -0.1428436407
+TotalFees_Lag1                                 0.2938861723
+TotalFeesLog_Lag1                              0.3013929031
+TotalTransactions_RunningAvg2                  0.9011273254
+TotalTransactions_RunningAvg3                  1.0000000000
+BlockSize_RunningAvg2                         -0.1900275169
+BlockSize_RunningAvg3                         -0.2200066184
+TotalFees_RunningAvg2                          0.3404783402
+TotalFees_RunningAvg3                          0.3638769708
+TotalFeesLog_RunningAvg2                       0.3488769631
+TotalFeesLog_RunningAvg3                       0.3726278605
+Interaction_HourIsWeekend                     -0.0178923537
+BlockSize_Squared                             -0.1488331765
+BlockSize_Cubed                               -0.1532749946
+HourOfDay_Squared                              0.0246122128
+HourOfDay_Cubed                                0.0009427274
+hour_sin                                      -0.0566412645
+hour_cos                                      -0.1252668158
+day_sin                                        0.0242345251
+day_cos                                       -0.0352150415
+                              BlockSize_RunningAvg2 BlockSize_RunningAvg3
+AverageFee                              0.037239770           0.032961024
+BlockNumber                            -0.157180963          -0.161721234
+BlockSize                               0.383364806           0.389689639
+TotalTransactions                      -0.160161506          -0.163134599
+TotalFees                              -0.044074571          -0.047037616
+Difficulty                             -0.153238030          -0.159558564
+TimeDiffMinutes                        -0.008054329          -0.005508806
+HourOfDay                              -0.060928678          -0.073422223
+DayOfWeek                              -0.086155801          -0.100967328
+IsWeekend                               0.029861748           0.025747945
+TotalFeesLog                           -0.053445494          -0.056685320
+TotalTransactions_Lag1                 -0.184524442          -0.180766534
+BlockSize_Lag1                          0.774917681           0.664689863
+TotalFees_Lag1                         -0.139406196          -0.117398174
+TotalFeesLog_Lag1                      -0.149998585          -0.127130698
+TotalTransactions_RunningAvg2          -0.199138415          -0.211667336
+TotalTransactions_RunningAvg3          -0.190027517          -0.220006618
+BlockSize_RunningAvg2                   1.000000000           0.877551544
+BlockSize_RunningAvg3                   0.877551544           1.000000000
+TotalFees_RunningAvg2                  -0.154048631          -0.134916094
+TotalFees_RunningAvg3                  -0.120527173          -0.140750153
+TotalFeesLog_RunningAvg2               -0.164284644          -0.145226031
+TotalFeesLog_RunningAvg3               -0.129756253          -0.150698649
+Interaction_HourIsWeekend               0.052127173           0.049910601
+BlockSize_Squared                       0.772995512           0.662689683
+BlockSize_Cubed                         0.767679033           0.657801042
+HourOfDay_Squared                      -0.048525338          -0.058262063
+HourOfDay_Cubed                        -0.036928222          -0.045160097
+hour_sin                                0.065137582           0.070076993
+hour_cos                                0.054336040           0.064856813
+day_sin                                 0.092264537           0.102318797
+day_cos                                -0.025328591          -0.035818789
+                              TotalFees_RunningAvg2 TotalFees_RunningAvg3
+AverageFee                             0.6799448636           0.693978681
+BlockNumber                            0.0585741056           0.065439278
+BlockSize                             -0.0501500234          -0.039881440
+TotalTransactions                      0.2237463699           0.220284379
+TotalFees                              0.7751206201           0.786288319
+Difficulty                             0.1173082668           0.125399878
+TimeDiffMinutes                       -0.0614326707          -0.064290431
+HourOfDay                              0.1252054886           0.130401831
+DayOfWeek                             -0.0003980527           0.001395753
+IsWeekend                             -0.1289300636          -0.130593464
+TotalFeesLog                           0.7838957421           0.794718858
+TotalTransactions_Lag1                 0.2881237741           0.264601747
+BlockSize_Lag1                        -0.1204071517          -0.086894973
+TotalFees_Lag1                         0.9158224809           0.880049147
+TotalFeesLog_Lag1                      0.9192088972           0.884392715
+TotalTransactions_RunningAvg2          0.3481938816           0.331580829
+TotalTransactions_RunningAvg3          0.3404783402           0.363876971
+BlockSize_RunningAvg2                 -0.1540486308          -0.120527173
+BlockSize_RunningAvg3                 -0.1349160936          -0.140750153
+TotalFees_RunningAvg2                  1.0000000000           0.966639810
+TotalFees_RunningAvg3                  0.9666398098           1.000000000
+TotalFeesLog_RunningAvg2               0.9982464810           0.967050534
+TotalFeesLog_RunningAvg3               0.9653509281           0.998370329
+Interaction_HourIsWeekend             -0.0931995148          -0.095097010
+BlockSize_Squared                     -0.1231778982          -0.089422157
+BlockSize_Cubed                       -0.1247598990          -0.091015777
+HourOfDay_Squared                      0.1187874589           0.124902314
+HourOfDay_Cubed                        0.1086453529           0.115481156
+hour_sin                              -0.1182754539          -0.119285808
+hour_cos                              -0.0098377369          -0.005260430
+day_sin                               -0.0489391886          -0.051040662
+day_cos                               -0.1034426304          -0.103307246
+                              TotalFeesLog_RunningAvg2 TotalFeesLog_RunningAvg3
+AverageFee                                 0.680440013              0.693914549
+BlockNumber                                0.055041866              0.061223451
+BlockSize                                 -0.056386630             -0.046123603
+TotalTransactions                          0.227445889              0.224076213
+TotalFees                                  0.776045782              0.786511696
+Difficulty                                 0.115060221              0.122469753
+TimeDiffMinutes                           -0.060308889             -0.063036348
+HourOfDay                                  0.127723929              0.132663908
+DayOfWeek                                  0.001374608              0.002843498
+IsWeekend                                 -0.134807523             -0.136629276
+TotalFeesLog                               0.786625031              0.796801373
+TotalTransactions_Lag1                     0.295245667              0.270157306
+BlockSize_Lag1                            -0.128411344             -0.094339555
+TotalFees_Lag1                             0.914596572              0.879035909
+TotalFeesLog_Lag1                          0.920932008              0.885932618
+TotalTransactions_RunningAvg2              0.357442138              0.339438342
+TotalTransactions_RunningAvg3              0.348876963              0.372627860
+BlockSize_RunningAvg2                     -0.164284644             -0.129756253
+BlockSize_RunningAvg3                     -0.145226031             -0.150698649
+TotalFees_RunningAvg2                      0.998246481              0.965350928
+TotalFees_RunningAvg3                      0.967050534              0.998370329
+TotalFeesLog_RunningAvg2                   1.000000000              0.968760803
+TotalFeesLog_RunningAvg3                   0.968760803              1.000000000
+Interaction_HourIsWeekend                 -0.099336994             -0.101688500
+BlockSize_Squared                         -0.131319139             -0.096985844
+BlockSize_Cubed                           -0.132978546             -0.098648669
+HourOfDay_Squared                          0.121475851              0.127288324
+HourOfDay_Cubed                            0.111072959              0.117564936
+hour_sin                                  -0.122762378             -0.123743910
+hour_cos                                  -0.009516905             -0.005152368
+day_sin                                   -0.051848053             -0.053506792
+day_cos                                   -0.108280372             -0.108414473
+                              Interaction_HourIsWeekend BlockSize_Squared
+AverageFee                                 -0.095970034        0.03951663
+BlockNumber                                -0.031341774       -0.13181623
+BlockSize                                   0.052984856        0.35193426
+TotalTransactions                          -0.014633882       -0.13835173
+TotalFees                                  -0.092831531       -0.03185512
+Difficulty                                 -0.015141754       -0.12893026
+TimeDiffMinutes                            -0.010777287        0.01221688
+HourOfDay                                   0.313423139       -0.04828984
+DayOfWeek                                   0.022933906       -0.06643673
+IsWeekend                                   0.819814776        0.03025735
+TotalFeesLog                               -0.098592202       -0.04036803
+TotalTransactions_Lag1                     -0.009683628       -0.18192333
+BlockSize_Lag1                              0.045425894        0.99783556
+TotalFees_Lag1                             -0.091024750       -0.19311084
+TotalFeesLog_Lag1                          -0.096141635       -0.20315599
+TotalTransactions_RunningAvg2              -0.016137015       -0.16156946
+TotalTransactions_RunningAvg3              -0.017892354       -0.14883318
+BlockSize_RunningAvg2                       0.052127173        0.77299551
+BlockSize_RunningAvg3                       0.049910601        0.66268968
+TotalFees_RunningAvg2                      -0.093199515       -0.12317790
+TotalFees_RunningAvg3                      -0.095097010       -0.08942216
+TotalFeesLog_RunningAvg2                   -0.099336994       -0.13131914
+TotalFeesLog_RunningAvg3                   -0.101688500       -0.09698584
+Interaction_HourIsWeekend                   1.000000000        0.04752666
+BlockSize_Squared                           0.047526661        1.00000000
+BlockSize_Cubed                             0.049201407        0.99797783
+HourOfDay_Squared                           0.302872670       -0.03755252
+HourOfDay_Cubed                             0.284089971       -0.02694422
+hour_sin                                   -0.262468079        0.05845345
+hour_cos                                   -0.019907842        0.04669402
+day_sin                                     0.279300297        0.07284696
+day_cos                                     0.587948503       -0.01117694
+                              BlockSize_Cubed HourOfDay_Squared HourOfDay_Cubed
+AverageFee                        0.040388715       0.103351991    0.1043875475
+BlockNumber                      -0.125312370       0.004602747    0.0063869995
+BlockSize                         0.348124864      -0.029853648   -0.0176150775
+TotalTransactions                -0.137732110      -0.001550502   -0.0207430058
+TotalFees                        -0.031261740       0.096459649    0.0850137200
+Difficulty                       -0.123311468       0.001474209    0.0045317407
+TimeDiffMinutes                   0.013528217      -0.014871987   -0.0130852508
+HourOfDay                        -0.048388259       0.966034510    0.9125064497
+DayOfWeek                        -0.063892635       0.005023885    0.0085741891
+IsWeekend                         0.032139490       0.009180906    0.0088490290
+TotalFeesLog                     -0.039717441       0.100859523    0.0890201920
+TotalTransactions_Lag1           -0.193656851       0.013516950   -0.0067469702
+BlockSize_Lag1                    0.991660135      -0.037641756   -0.0275562405
+TotalFees_Lag1                   -0.194165050       0.105571506    0.0954779787
+TotalFeesLog_Lag1                -0.204327414       0.108565130    0.0981358884
+TotalTransactions_RunningAvg2    -0.168552904       0.021413877   -0.0014346678
+TotalTransactions_RunningAvg3    -0.153274995       0.024612213    0.0009427274
+BlockSize_RunningAvg2             0.767679033      -0.048525338   -0.0369282223
+BlockSize_RunningAvg3             0.657801042      -0.058262063   -0.0451600971
+TotalFees_RunningAvg2            -0.124759899       0.118787459    0.1086453529
+TotalFees_RunningAvg3            -0.091015777       0.124902314    0.1154811564
+TotalFeesLog_RunningAvg2         -0.132978546       0.121475851    0.1110729589
+TotalFeesLog_RunningAvg3         -0.098648669       0.127288324    0.1175649358
+Interaction_HourIsWeekend         0.049201407       0.302872670    0.2840899712
+BlockSize_Squared                 0.997977828      -0.037552518   -0.0269442206
+BlockSize_Cubed                   1.000000000      -0.037126660   -0.0261199064
+HourOfDay_Squared                -0.037126660       1.000000000    0.9856460448
+HourOfDay_Cubed                  -0.026119906       0.985646045    1.0000000000
+hour_sin                          0.059085023      -0.792951322   -0.7259986541
+hour_cos                          0.048985051       0.154891411    0.3036046150
+day_sin                           0.070872936      -0.003346660   -0.0122435383
+day_cos                          -0.008794579      -0.002308214   -0.0042942681
+                                   hour_sin      hour_cos      day_sin
+AverageFee                    -9.079744e-02  5.157959e-02 -0.057259925
+BlockNumber                   -5.596032e-03  2.711911e-02  0.092283067
+BlockSize                      5.198294e-02  5.756058e-02  0.081346953
+TotalTransactions             -2.536957e-02 -1.086138e-01  0.017616499
+TotalFees                     -1.054150e-01 -1.987177e-02 -0.048021570
+Difficulty                     4.616187e-03  2.586570e-02  0.045972600
+TimeDiffMinutes                1.833581e-02 -1.313426e-03 -0.013566082
+HourOfDay                     -7.890837e-01 -9.528917e-02  0.007726726
+DayOfWeek                      1.121354e-04  2.358729e-02 -0.729926756
+IsWeekend                     -2.542329e-02  1.774902e-02  0.340955672
+TotalFeesLog                  -1.109361e-01 -2.027121e-02 -0.050371388
+TotalTransactions_Lag1        -4.219493e-02 -1.099817e-01  0.016467315
+BlockSize_Lag1                 5.727923e-02  4.378734e-02  0.074329041
+TotalFees_Lag1                -1.089334e-01 -1.274105e-02 -0.049347230
+TotalFeesLog_Lag1             -1.138722e-01 -1.274680e-02 -0.051750532
+TotalTransactions_RunningAvg2 -5.371483e-02 -1.209840e-01  0.022435128
+TotalTransactions_RunningAvg3 -5.664126e-02 -1.252668e-01  0.024234525
+BlockSize_RunningAvg2          6.513758e-02  5.433604e-02  0.092264537
+BlockSize_RunningAvg3          7.007699e-02  6.485681e-02  0.102318797
+TotalFees_RunningAvg2         -1.182755e-01 -9.837737e-03 -0.048939189
+TotalFees_RunningAvg3         -1.192858e-01 -5.260430e-03 -0.051040662
+TotalFeesLog_RunningAvg2      -1.227624e-01 -9.516905e-03 -0.051848053
+TotalFeesLog_RunningAvg3      -1.237439e-01 -5.152368e-03 -0.053506792
+Interaction_HourIsWeekend     -2.624681e-01 -1.990784e-02  0.279300297
+BlockSize_Squared              5.845345e-02  4.669402e-02  0.072846956
+BlockSize_Cubed                5.908502e-02  4.898505e-02  0.070872936
+HourOfDay_Squared             -7.929513e-01  1.548914e-01 -0.003346660
+HourOfDay_Cubed               -7.259987e-01  3.036046e-01 -0.012243538
+hour_sin                       1.000000e+00  5.813372e-05 -0.019046763
+hour_cos                       5.813372e-05  1.000000e+00 -0.048138425
+day_sin                       -1.904676e-02 -4.813843e-02  1.000000000
+day_cos                       -1.987766e-02 -2.174355e-04 -0.034091487
+                                    day_cos
+AverageFee                    -0.1007588933
+BlockNumber                   -0.0853790934
+BlockSize                     -0.0112897929
+TotalTransactions             -0.0237761538
+TotalFees                     -0.1010775777
+Difficulty                    -0.0325760237
+TimeDiffMinutes                0.0004016873
+HourOfDay                     -0.0035375960
+DayOfWeek                      0.3895292811
+IsWeekend                      0.7170434071
+TotalFeesLog                  -0.1060033333
+TotalTransactions_Lag1        -0.0253220871
+BlockSize_Lag1                -0.0137632099
+TotalFees_Lag1                -0.0971788822
+TotalFeesLog_Lag1             -0.1018577384
+TotalTransactions_RunningAvg2 -0.0340130768
+TotalTransactions_RunningAvg3 -0.0352150415
+BlockSize_RunningAvg2         -0.0253285906
+BlockSize_RunningAvg3         -0.0358187890
+TotalFees_RunningAvg2         -0.1034426304
+TotalFees_RunningAvg3         -0.1033072459
+TotalFeesLog_RunningAvg2      -0.1082803724
+TotalFeesLog_RunningAvg3      -0.1084144731
+Interaction_HourIsWeekend      0.5879485028
+BlockSize_Squared             -0.0111769446
+BlockSize_Cubed               -0.0087945789
+HourOfDay_Squared             -0.0023082140
+HourOfDay_Cubed               -0.0042942681
+hour_sin                      -0.0198776611
+hour_cos                      -0.0002174355
+day_sin                       -0.0340914874
+day_cos                        1.0000000000
+
+PCA Summary:
+
+Importance of components:
+                         PC1    PC2    PC3     PC4     PC5     PC6     PC7
+Standard deviation     2.929 2.1443 1.9315 1.68137 1.51629 1.33764 1.32384
+Proportion of Variance 0.268 0.1437 0.1166 0.08834 0.07185 0.05592 0.05477
+Cumulative Proportion  0.268 0.4117 0.5283 0.61663 0.68848 0.74439 0.79916
+                           PC8     PC9    PC10    PC11   PC12    PC13    PC14
+Standard deviation     1.19774 0.99879 0.87736 0.80650 0.7611 0.59735 0.56477
+Proportion of Variance 0.04483 0.03117 0.02406 0.02033 0.0181 0.01115 0.00997
+Cumulative Proportion  0.84399 0.87517 0.89922 0.91955 0.9376 0.94880 0.95877
+                          PC15    PC16    PC17    PC18    PC19    PC20    PC21
+Standard deviation     0.52438 0.45325 0.43385 0.39015 0.34292 0.32663 0.31180
+Proportion of Variance 0.00859 0.00642 0.00588 0.00476 0.00367 0.00333 0.00304
+Cumulative Proportion  0.96736 0.97378 0.97966 0.98442 0.98809 0.99143 0.99446
+                          PC22    PC23    PC24    PC25    PC26    PC27    PC28
+Standard deviation     0.29144 0.19486 0.18624 0.08676 0.07397 0.06863 0.03411
+Proportion of Variance 0.00265 0.00119 0.00108 0.00024 0.00017 0.00015 0.00004
+Cumulative Proportion  0.99712 0.99831 0.99939 0.99962 0.99980 0.99994 0.99998
+                          PC29    PC30     PC31     PC32
+Standard deviation     0.02248 0.01172 0.005268 0.002592
+Proportion of Variance 0.00002 0.00000 0.000000 0.000000
+Cumulative Proportion  0.99999 1.00000 1.000000 1.000000

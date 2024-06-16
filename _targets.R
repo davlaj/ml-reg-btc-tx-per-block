@@ -12,7 +12,10 @@ list(tar_target(dataFormatted, formatting(raw_data)),
      tar_target(dataOutliers, outliers(dataTemporalFeature, outliers_to_remove = TRUE)),
      tar_target(analyzeOutliers, analyze_outliers(dataTemporalFeature, dataOutliers)),
      tar_target(dataFullFeatureEngerineered, interaction_polynomial_feature(dataOutliers)),
-     tar_target(analyzeInteractionPolynomialFeatures, analyze_interaction_polynomial_features(dataFullFeatureEngerineered, "TotalTransactions", c("Interaction_HourIsWeekend", "BlockSize_Squared", "BlockSize_Cubed", "HourOfDay_Squared", "HourOfDay_Cubed")))
+     tar_target(analyzeInteractionPolynomialFeatures, analyze_interaction_polynomial_features(dataFullFeatureEngerineered, "TotalTransactions", c("Interaction_HourIsWeekend", "BlockSize_Squared", "BlockSize_Cubed", "HourOfDay_Squared", "HourOfDay_Cubed"))),
+     tar_target(dataEncoded, encoding(dataFullFeatureEngerineered)),
+     tar_target(analyzeEncodingEffects, analyze_encoding_effects(dataEncoded)),
+     tar_target(reportEncodingEffects, generate_analysis_report(analyzeEncodingEffects))
      #tar_target(dataSplitted, splitting(dataPreprocessed), seed = 123)
      )
 

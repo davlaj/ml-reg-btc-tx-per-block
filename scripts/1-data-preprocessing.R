@@ -153,6 +153,7 @@ outliers <- function(input_data, outliers_to_remove = TRUE) {
   return(data)
 }
 #data_outliers_treated <- outliers(data_with_temporal_feature, outliers_to_remove = FALSE) # c("AverageFee")
+#analyze_outliers(data_pre = data_with_temporal_feature, data_post = data_outliers_treated)
 
 # 4.Interaction and Polynomial Feature Engineering 
 interaction_polynomial_feature <- function(input_data) {
@@ -176,6 +177,7 @@ interaction_polynomial_feature <- function(input_data) {
   return(data)
 }
 #data_full_feature_engineered <- interaction_polynomial_feature(data_outliers_treated)
+#analyze_interaction_polynomial_features(data_full_feature_engineered, "TotalTransactions", c("Interaction_HourIsWeekend", "BlockSize_Squared", "BlockSize_Cubed", "HourOfDay_Squared", "HourOfDay_Cubed"))
 
 # 5.Encoding # Apply to categorical variables
 encoding <- function(input_data) {
@@ -184,20 +186,19 @@ encoding <- function(input_data) {
   data <- input_data
 
   ## ONE-HOT ENCODING (Apply to nominal data, e.g. blue, green, etc)
+  # none
   
-  # Convert HourOfDay and DayOfWeek to factors to ensure model.matrix recognizes them as categorical variables
-  data$HourOfDay <- factor(data$HourOfDay)
-  data$DayOfWeek <- factor(data$DayOfWeek)
-  # model.matrix will by default drop the first dummy variable of each category if the index start at 1
-  # DayOfWeek starts at 1, but HourOfDay start at 0, so we need to drop it to avoid the Dummy Variable Trap
-  onehot_encoded <- model.matrix(~ HourOfDay + DayOfWeek - 1, data)
-  data <- cbind(data, onehot_encoded)
-  data <- data %>% select(-HourOfDay0)  # Remove the HourOfDay0 column
-  # Check the structure to confirm changes
-  str(data)
-  # Convert back DayOfWeek and HourOfDay to numeric format
-  data$DayOfWeek <- as.numeric(as.character(data$DayOfWeek))
-  data$HourOfDay <- as.numeric(as.character(data$HourOfDay))
+  # # Convert HourOfDay and DayOfWeek to factors to ensure model.matrix recognizes them as categorical variables
+  # data$HourOfDay <- factor(data$HourOfDay)
+  # data$DayOfWeek <- factor(data$DayOfWeek)
+  # # model.matrix will by default drop the first dummy variable of each category if the index start at 1
+  # # DayOfWeek starts at 1, but HourOfDay start at 0, so we need to drop it to avoid the Dummy Variable Trap
+  # onehot_encoded <- model.matrix(~ HourOfDay + DayOfWeek - 1, data)
+  # data <- cbind(data, onehot_encoded)
+  # data <- data %>% select(-HourOfDay0)  # Remove the HourOfDay0 column
+  # # Convert back DayOfWeek and HourOfDay to numeric format
+  # data$DayOfWeek <- as.numeric(as.character(data$DayOfWeek))
+  # data$HourOfDay <- as.numeric(as.character(data$HourOfDay))
   
   ## TARGET ENCODING (See StatQuest -> For when one-hot encoding would create to many dummy variables)
   # none
@@ -211,11 +212,11 @@ encoding <- function(input_data) {
   data$hour_cos <- cos(2 * pi * data$HourOfDay / 24)
   data$day_sin <- sin(2 * pi * data$DayOfWeek / 7)
   data$day_cos <- cos(2 * pi * data$DayOfWeek / 7)
-  head(data)
   
   return(data) 
 }
 #data_encoded <- encoding(data_full_feature_engineered) 
+#analyze_encoding_effects(data_encoded)
 
 ###########################
 # 6.Data Integrity Checks #
