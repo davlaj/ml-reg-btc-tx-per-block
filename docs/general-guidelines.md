@@ -1,5 +1,9 @@
 # General Guidelines
 
+## Assumptions of Linear Regression
+
+![Assumptions of Linear Regression](https://raw.githubusercontent.com/your-username/your-repo-name/main/path-to-your-image/Assumptions-of-Linear-Regression.png)
+
 ## Model Preprocessing Requirements
 
 | Model                    | Scaling Needed | Encoding Needed | Outliers Handling Needed | Regularization (Lasso/Ridge/ElasticNet) | Regression | Classification |
