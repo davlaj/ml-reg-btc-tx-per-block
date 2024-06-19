@@ -3,3 +3,4 @@
 .RData
 .Ruserdata
 _targets/
+/output/exploratory-data-analysis/*.rds

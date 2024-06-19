@@ -19,7 +19,7 @@ analyze_post_formatting <- function(data) {
   print(summary(data))
   sink()  # Stop diverting the output to the file
   
-  pdf(paste0(output_dir, "/0.2-histograms_post_formatting.pdf"))
+  pdf(paste0(output_dir, "/0.2-histograms_and_heatmap_post_formatting.pdf"))
   
   # Histograms for all numeric columns
   p <- data %>%
@@ -32,6 +32,27 @@ analyze_post_formatting <- function(data) {
     theme_minimal()
   
   print(p)  # Explicitly print the ggplot object
+  
+  # Correlation matrix
+  correlation_matrix <- cor(data %>% select(where(is.numeric)), use = "complete.obs")
+  
+  # Plot correlation matrix as a heatmap
+  heatmap_plot <- ggplot(melt(correlation_matrix), aes(Var1, Var2, fill = value)) +
+    geom_tile() +
+    geom_text(aes(label = round(value, 2)), color = "black", size = 3) +
+    scale_fill_gradient2(low = "red", high = "forestgreen", mid = "white", 
+                         midpoint = 0, limit = c(-1, 1), space = "Lab", 
+                         name="Correlation") +
+    theme_minimal() +
+    theme(axis.text.x = element_text(angle = 45, vjust = 1, 
+                                     size = 10, hjust = 1)) +
+    coord_fixed() +
+    labs(title = "Correlation Heatmap of Numeric Variables",
+         x = "",
+         y = "")
+  
+  print(heatmap_plot)
+  
   dev.off()
 }
 
@@ -319,7 +340,7 @@ analyze_interaction_polynomial_features <- function(data, target_var, feature_li
   heatmap <- ggplot(melted_corr, aes(x = Var1, y = Var2, fill = value)) +
     geom_tile() +
     geom_text(aes(label = round(value, 2)), color = "black", size = 3) +
-    scale_fill_gradient2(low = "blue", high = "forestgreen", mid = "white", midpoint = 0, limit = c(-1, 1), space = "Lab", name = "Correlation") +
+    scale_fill_gradient2(low = "red", high = "forestgreen", mid = "white", midpoint = 0, limit = c(-1, 1), space = "Lab", name = "Correlation") +
     theme_minimal() +
     theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
     labs(title = paste("Correlation Heatmap of", target_var, "and Selected Features"),
@@ -544,5 +565,8 @@ final_data_integrity_check <- function(data) {
 
   dev.off()
 }
+
+
+
 
 
