@@ -416,10 +416,17 @@ analyze_encoding_effects <- function(data) {
   close(txt_con)
 
   cat("PDF and text connections closed\n")
+  
+  # Return paths to generated files
+  return(c(pdf_path, txt_path, corr_matrix_rds_path, pca_summary_rds_path))
 }
 
 
-generate_analysis_report <- function(data) {
+generate_analysis_report <- function(file_paths) {
+  # Extract file paths from the input character vector
+  corr_matrix_rds_path <- file_paths[grepl("corr_matrix", file_paths)]
+  pca_summary_rds_path <- file_paths[grepl("pca_summary", file_paths)]
+  
   log_file <- paste0(output_dir, "/generate_analysis_report_debug.log")
   log_con <- file(log_file, open = "wt")
   
@@ -429,9 +436,9 @@ generate_analysis_report <- function(data) {
   
   log("Starting generate_analysis_report")
   
-  # Paths to the input files
-  corr_matrix_rds_path <- paste0(output_dir, "/.5.1-encoding_effects_corr_matrix.rds")
-  pca_summary_rds_path <- paste0(output_dir, "/.5.1-encoding_effects_pca_summary.rds")
+  # # Paths to the input files
+  # corr_matrix_rds_path <- paste0(output_dir, "/.5.1-encoding_effects_corr_matrix.rds")
+  # pca_summary_rds_path <- paste0(output_dir, "/.5.1-encoding_effects_pca_summary.rds")
   
   log(paste("Correlation matrix RDS file:", corr_matrix_rds_path))
   log(paste("PCA summary RDS file:", pca_summary_rds_path))

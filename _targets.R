@@ -21,8 +21,9 @@ list(
      tar_target(analyzeInteractionPolynomialFeatures, analyze_interaction_polynomial_features(dataFullFeatureEngerineered, "TotalTransactions", c("Interaction_HourIsWeekend", "BlockSize_Squared", "BlockSize_Cubed", "HourOfDay_Squared", "HourOfDay_Cubed"))),
      # 5.Encoding # Apply to categorical variables
      tar_target(dataEncoded, encoding(dataFullFeatureEngerineered)),
-     tar_target(analyzeEncodingEffects, analyze_encoding_effects(dataEncoded)),
-     tar_target(reportEncodingEffects, generate_analysis_report(analyzeEncodingEffects))
+     tar_target(analyzeEncodingEffects, analyze_encoding_effects(dataEncoded), format = "file"),
+     # Analysis Report
+     tar_target(reportEncodingEffects, generate_analysis_report(analyzeEncodingEffects), format = "file")
   
      #tar_target(dataSplitted, splitting(dataPreprocessed), seed = 123)
      )

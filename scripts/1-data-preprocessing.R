@@ -26,7 +26,8 @@ formatting <- function (input_file){
 # 1.Missing Values 
 missing_values <- function (input_data){
   
-  data <- input_data
+  # Initial feature selection
+  data <- input_data[, !names(input_data) %in% c("")]
   
   # DECIDE ON STRATEGY (Deletion, Imputation)
   
