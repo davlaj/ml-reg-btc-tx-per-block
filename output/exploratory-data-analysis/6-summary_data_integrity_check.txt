@@ -1,0 +1,72 @@
+SUMMARY
+-----------------
+      Date                          AverageFee         BlockHash        
+ Min.   :2024-02-29 04:57:45.00   Min.   :0.0000000   Length:9997       
+ 1st Qu.:2024-03-16 22:34:52.00   1st Qu.:0.0000727   Class :character  
+ Median :2024-04-03 04:43:51.00   Median :0.0001099   Mode  :character  
+ Mean   :2024-04-03 02:53:15.50   Mean   :0.0003592                     
+ 3rd Qu.:2024-04-19 22:34:09.00   3rd Qu.:0.0001899                     
+ Max.   :2024-05-07 20:32:44.00   Max.   :1.0977373                     
+  BlockNumber       BlockSize       TotalTransactions   TotalFees      
+ Min.   :832494   Min.   :    204   Min.   :   1      Min.   : 0.0000  
+ 1st Qu.:834993   1st Qu.:1563162   1st Qu.:2377      1st Qu.: 0.1812  
+ Median :837492   Median :1677998   Median :2977      Median : 0.2947  
+ Mean   :837492   Mean   :1741347   Mean   :3009      Mean   : 0.6002  
+ 3rd Qu.:839991   3rd Qu.:1849707   3rd Qu.:3556      3rd Qu.: 0.5267  
+ Max.   :842490   Max.   :3993936   Max.   :8320      Max.   :37.6256  
+   Difficulty        TimeDiffMinutes    HourOfDay       DayOfWeek    
+ Min.   :7.935e+13   Min.   : 0.000   Min.   : 0.00   Min.   :1.000  
+ 1st Qu.:8.313e+13   1st Qu.: 2.900   1st Qu.: 6.00   1st Qu.:2.000  
+ Median :8.395e+13   Median : 6.883   Median :12.00   Median :4.000  
+ Mean   :8.408e+13   Mean   : 9.889   Mean   :11.53   Mean   :3.982  
+ 3rd Qu.:8.639e+13   3rd Qu.:13.683   3rd Qu.:18.00   3rd Qu.:6.000  
+ Max.   :8.810e+13   Max.   :80.217   Max.   :23.00   Max.   :7.000  
+   IsWeekend       TotalFeesLog    TotalTransactions_Lag1 BlockSize_Lag1   
+ Min.   :0.0000   Min.   :0.0000   Min.   :   1           Min.   :    204  
+ 1st Qu.:0.0000   1st Qu.:0.1666   1st Qu.:2378           1st Qu.:1563154  
+ Median :0.0000   Median :0.2583   Median :2977           Median :1677991  
+ Mean   :0.2973   Mean   :0.3686   Mean   :3009           Mean   :1741285  
+ 3rd Qu.:1.0000   3rd Qu.:0.4231   3rd Qu.:3556           3rd Qu.:1849539  
+ Max.   :1.0000   Max.   :3.6539   Max.   :8320           Max.   :3993936  
+ TotalFees_Lag1    TotalFeesLog_Lag1 TotalTransactions_RunningAvg2
+ Min.   : 0.0000   Min.   :0.0000    Min.   :  81.5               
+ 1st Qu.: 0.1813   1st Qu.:0.1666    1st Qu.:2379.5               
+ Median : 0.2948   Median :0.2584    Median :2929.5               
+ Mean   : 0.6003   Mean   :0.3686    Mean   :3008.7               
+ 3rd Qu.: 0.5267   3rd Qu.:0.4231    3rd Qu.:3505.5               
+ Max.   :37.6256   Max.   :3.6539    Max.   :6736.5               
+ TotalTransactions_RunningAvg3 BlockSize_RunningAvg2 BlockSize_RunningAvg3
+ Min.   : 130.7                Min.   : 590760       Min.   : 843723      
+ 1st Qu.:2391.0                1st Qu.:1578782       1st Qu.:1588077      
+ Median :2907.0                Median :1690984       Median :1695772      
+ Mean   :3008.7                Mean   :1741277       Mean   :1741271      
+ 3rd Qu.:3472.0                3rd Qu.:1843078       3rd Qu.:1842900      
+ Max.   :6621.7                Max.   :3710399       Max.   :3660581      
+ TotalFees_RunningAvg2 TotalFees_RunningAvg3 TotalFeesLog_RunningAvg2
+ Min.   : 0.03848      Min.   : 0.05134      Min.   :0.03707         
+ 1st Qu.: 0.18934      1st Qu.: 0.19089      1st Qu.:0.17268         
+ Median : 0.29569      Median : 0.29561      Median :0.25796         
+ Mean   : 0.60027      Mean   : 0.60027      Mean   :0.36861         
+ 3rd Qu.: 0.52803      3rd Qu.: 0.52544      3rd Qu.:0.42263         
+ Max.   :26.91451      Max.   :25.66171      Max.   :3.32370         
+ TotalFeesLog_RunningAvg3 Interaction_HourIsWeekend BlockSize_Squared  
+ Min.   :0.04946          Min.   : 0.000            Min.   :4.162e+04  
+ 1st Qu.:0.17389          1st Qu.: 0.000            1st Qu.:2.443e+12  
+ Median :0.25744          Median : 0.000            Median :2.816e+12  
+ Mean   :0.36861          Mean   : 3.405            Mean   :3.141e+12  
+ 3rd Qu.:0.41908          3rd Qu.: 3.000            3rd Qu.:3.421e+12  
+ Max.   :3.27731          Max.   :23.000            Max.   :1.595e+13  
+ BlockSize_Cubed     HourOfDay_Squared HourOfDay_Cubed    hour_sin        
+ Min.   :8.490e+06   Min.   :  0       Min.   :    0   Min.   :-1.000000  
+ 1st Qu.:3.819e+18   1st Qu.: 36       1st Qu.:  216   1st Qu.:-0.707107  
+ Median :4.725e+18   Median :144       Median : 1728   Median : 0.000000  
+ Mean   :5.911e+18   Mean   :181       Mean   : 3191   Mean   :-0.001408  
+ 3rd Qu.:6.327e+18   3rd Qu.:324       3rd Qu.: 5832   3rd Qu.: 0.707107  
+ Max.   :6.371e+19   Max.   :529       Max.   :12167   Max.   : 1.000000  
+    hour_cos             day_sin           day_cos        
+ Min.   :-1.0000000   Min.   :-0.9749   Min.   :-0.90097  
+ 1st Qu.:-0.7071068   1st Qu.:-0.7818   1st Qu.:-0.90097  
+ Median : 0.0000000   Median : 0.0000   Median :-0.22252  
+ Mean   : 0.0003304   Mean   : 0.0167   Mean   : 0.01528  
+ 3rd Qu.: 0.7071068   3rd Qu.: 0.7818   3rd Qu.: 0.62349  
+ Max.   : 1.0000000   Max.   : 0.9749   Max.   : 1.00000  

@@ -1,4 +1,4 @@
-# Visualizations and statistical analysis
+# Visualizations and results
 
 # Load packages
 source("setup-packages.R")
@@ -421,7 +421,18 @@ analyze_encoding_effects <- function(data) {
   return(c(pdf_path, txt_path, corr_matrix_rds_path, pca_summary_rds_path))
 }
 
+# Function to perform Final Data Integrity Check
+analyze_integrity_check <- function(data) {
+  
+  # Open a text file for writing summary statistics
+  sink(paste0(output_dir, "/6-summary_data_integrity_check.txt"))
+  cat("SUMMARY\n")
+  cat("-----------------\n")
+  print(summary(data))
+  sink()  # Stop diverting the output to the file
+}
 
+# Function to generate an analysis report
 generate_analysis_report <- function(file_paths) {
   # Extract file paths from the input character vector
   corr_matrix_rds_path <- file_paths[grepl("corr_matrix", file_paths)]
@@ -561,16 +572,6 @@ generate_analysis_report <- function(file_paths) {
   
   # Return the path to the generated PDF
   return(pdf_path)
-}
-
-# Function to perform Final Data Integrity Check
-final_data_integrity_check <- function(data) {
-  pdf(paste0(output_dir, "/final_data_integrity_check.pdf"))
-
-  # Summary statistics and any final checks
-  print(summary(data))
-
-  dev.off()
 }
 
 

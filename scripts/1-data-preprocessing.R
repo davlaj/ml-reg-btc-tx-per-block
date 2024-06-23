@@ -178,7 +178,6 @@ interaction_polynomial_feature <- function(input_data) {
 
 # 5.Encoding # Apply to categorical variables
 encoding <- function(input_data) {
-  # WHICH ALGORITHMS NEED ENCODING?
   
   data <- input_data
 
@@ -215,15 +214,15 @@ encoding <- function(input_data) {
 #data_encoded <- encoding(data_full_feature_engineered) 
 #analyze_encoding_effects(data_encoded)
 
-###########################
-# 6.Data Integrity Checks #
-###########################
+# 6.Data Integrity Checks 
+integrity_check <- function(input_data) {
+  
+  data <- input_data
 
-# DUPLICATES
-# Remove duplicate rows
-#data_preprocessed <- data_encoded %>% distinct()
-
-# VALIDITY CHECKS
-#summary(data_preprocessed)
+  # Remove duplicate rows
+  data <- data %>% distinct()
+  
+  return(data)
+}
 
 
