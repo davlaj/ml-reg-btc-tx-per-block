@@ -13,8 +13,8 @@ list(
      tar_target(analyzedTemporalFeature, analyze_temporal_features(dataTemporalFeature, c("TotalTransactions", "BlockSize", "AverageFee", "TotalFees"), target_var = "TotalTransactions")),
      tar_target(analyzedTemporalFeatureLogTransform, analyze_temporal_features(dataTemporalFeature, c("TotalTransactions", "BlockSize", "AverageFee", "TotalFees"), target_var = "TotalTransactions", log_transform = TRUE)),
      # 3.Outliers 
-     # comment: outliers_to_remove in outliers function has to be a list c()
-     tar_target(dataOutliers, outliers(dataTemporalFeature, outliers_to_remove = TRUE)),
+     # comment: outliers_to_remove in outliers function has to be = TRUE, FALSE or a list or variables c()
+     tar_target(dataOutliers, outliers(dataTemporalFeature, outliers_to_remove = FALSE)),
      tar_target(analyzeOutliers, analyze_outliers(dataTemporalFeature, dataOutliers)),
      # 4.Interaction and Polynomial Feature Engineering 
      tar_target(dataFullFeatureEngerineered, interaction_polynomial_feature(dataOutliers)),

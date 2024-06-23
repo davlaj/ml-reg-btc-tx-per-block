@@ -229,12 +229,12 @@ analyze_outliers <- function(data_pre, data_post) {
   
   # Write summary statistics
   writeLines("Summary Statistics for Numeric Variables:", stats_file)
-  for(variable in unique(combined_data$variable)) {
+  for (variable in unique(combined_data$variable)) {
     writeLines(paste("\nVariable:", variable), stats_file)
     writeLines("Metric\tBefore\tAfter\t% Change", stats_file)
     
-    before_data <- combined_data %>% filter(variable == variable, Condition == "Before")
-    after_data <- combined_data %>% filter(variable == variable, Condition == "After")
+    before_data <- combined_data %>% filter(variable == !!variable, Condition == "Before")
+    after_data <- combined_data %>% filter(variable == !!variable, Condition == "After")
     
     before_stats <- summary(before_data$value)
     after_stats <- summary(after_data$value)
@@ -246,7 +246,7 @@ analyze_outliers <- function(data_pre, data_post) {
     before_values <- c(before_stats[1], before_stats[2], before_stats[3], before_stats[4], before_stats[5], before_stats[6], before_data$IQR[1], before_outliers_count, (before_outliers_count / nrow(before_data)) * 100)
     after_values <- c(after_stats[1], after_stats[2], after_stats[3], after_stats[4], after_stats[5], after_stats[6], after_data$IQR[1], after_outliers_count, (after_outliers_count / nrow(after_data)) * 100)
     
-    for(i in seq_along(metrics)) {
+    for (i in seq_along(metrics)) {
       change <- ((after_values[i] - before_values[i]) / before_values[i]) * 100
       stats_text <- paste(metrics[i], before_values[i], after_values[i], round(change, 2), sep = "\t")
       writeLines(stats_text, stats_file)
@@ -290,6 +290,105 @@ analyze_outliers <- function(data_pre, data_post) {
   dev.off()
   close(stats_file)
 }
+# analyze_outliers <- function(data_pre, data_post) {
+#   # Open PDF output with specified width and height
+#   pdf(paste0(output_dir, "/3.1a-boxplot_outliers_treatment_visual.pdf"), width = 12, height = 10)
+#   # Open a text file for writing summary statistics
+#   stats_file <- file(paste0(output_dir, "/3.1b-boxplot_outliers_summary_stats.txt"), open = "wt")
+#   
+#   # Identify numeric variables
+#   numeric_vars <- sapply(data_pre, is.numeric)
+#   
+#   # Prepare data for plotting
+#   data_pre_long <- reshape2::melt(data_pre[, numeric_vars], id.vars = NULL)
+#   data_post_long <- reshape2::melt(data_post[, numeric_vars], id.vars = NULL)
+#   
+#   # Add a new 'Condition' column to differentiate the datasets
+#   data_pre_long$Condition <- 'Before'
+#   data_post_long$Condition <- 'After'
+#   
+#   # Combine the datasets
+#   combined_data <- rbind(data_pre_long, data_post_long)
+#   
+#   # Reorder the Condition factor
+#   combined_data$Condition <- factor(combined_data$Condition, levels = c("Before", "After"))
+#   
+#   # Calculate IQR and identify outliers for coloring
+#   combined_data <- combined_data %>%
+#     group_by(variable, Condition) %>%
+#     mutate(
+#       Q1 = quantile(value, probs = 0.25, na.rm = TRUE),
+#       Q3 = quantile(value, probs = 0.75, na.rm = TRUE),
+#       IQR = Q3 - Q1,
+#       Lower = Q1 - 1.5 * IQR,
+#       Upper = Q3 + 1.5 * IQR,
+#       Outlier = ifelse(value < Lower | value > Upper, "Outlier", "Inlier")
+#     ) %>%
+#     ungroup()
+#   
+#   # Write summary statistics
+#   writeLines("Summary Statistics for Numeric Variables:", stats_file)
+#   for(variable in unique(combined_data$variable)) {
+#     writeLines(paste("\nVariable:", variable), stats_file)
+#     writeLines("Metric\tBefore\tAfter\t% Change", stats_file)
+#     
+#     before_data <- combined_data %>% filter(variable == variable, Condition == "Before")
+#     after_data <- combined_data %>% filter(variable == variable, Condition == "After")
+#     
+#     before_stats <- summary(before_data$value)
+#     after_stats <- summary(after_data$value)
+#     
+#     before_outliers_count <- sum(before_data$Outlier == "Outlier")
+#     after_outliers_count <- sum(after_data$Outlier == "Outlier")
+#     
+#     metrics <- c("Min", "1st Qu.", "Median", "Mean", "3rd Qu.", "Max", "IQR", "Outliers", "Outliers (%)")
+#     before_values <- c(before_stats[1], before_stats[2], before_stats[3], before_stats[4], before_stats[5], before_stats[6], before_data$IQR[1], before_outliers_count, (before_outliers_count / nrow(before_data)) * 100)
+#     after_values <- c(after_stats[1], after_stats[2], after_stats[3], after_stats[4], after_stats[5], after_stats[6], after_data$IQR[1], after_outliers_count, (after_outliers_count / nrow(after_data)) * 100)
+#     
+#     for(i in seq_along(metrics)) {
+#       change <- ((after_values[i] - before_values[i]) / before_values[i]) * 100
+#       stats_text <- paste(metrics[i], before_values[i], after_values[i], round(change, 2), sep = "\t")
+#       writeLines(stats_text, stats_file)
+#     }
+#     
+#     # Calculate the percentage of outliers removed
+#     removed_outliers <- before_outliers_count - after_outliers_count
+#     percentage_removed <- (removed_outliers / before_outliers_count) * 100
+#     writeLines(paste("Outliers removed:", removed_outliers, "\tPercentage removed:", round(percentage_removed, 2), "%"), stats_file)
+#   }
+#   
+#   # Creating boxplots for all numeric variables, 6 plots per page
+#   for (i in seq_len(ceiling(length(unique(combined_data$variable)) / 6))) {
+#     vars_subset <- unique(combined_data$variable)[((i - 1) * 6 + 1):min(i * 6, length(unique(combined_data$variable)))]
+#     data_subset <- combined_data %>% filter(variable %in% vars_subset)
+#     
+#     p <- ggplot(data_subset, aes(x = Condition, y = value, fill = Condition)) +
+#       geom_boxplot(outlier.shape = NA, width = 0.6, position = position_dodge(width = 0.8), alpha = 0.5) +  # Added transparency to boxplots
+#       geom_point(aes(color = Outlier, shape = Outlier), position = position_jitterdodge(jitter.width = 0.02, dodge.width = 0.8), size = 1.5, alpha = 0.5) +  # Added transparency to points
+#       scale_color_manual(values = c("Outlier" = "orange", "Inlier" = "darkgray"), guide = guide_legend(override.aes = list(alpha = 1))) +  # Ensure legend colors are opaque
+#       scale_shape_manual(values = c("Outlier" = 1, "Inlier" = 1)) +  # unfilled shapes
+#       facet_wrap(~variable, scales = "free_y", ncol = 3) +
+#       scale_fill_manual(values = c("Before" = "lightblue", "After" = "forestgreen"), guide = guide_legend(override.aes = list(alpha = 1))) +  # Ensure legend colors are opaque
+#       theme_minimal() +
+#       theme(
+#         axis.text.x = element_text(angle = 45, hjust = 1),
+#         legend.position = "bottom"
+#       ) +
+#       labs(
+#         title = "Comparison of Numeric Variables Before and After Outliers Treatment",
+#         x = "",
+#         y = "Values",
+#         subtitle = "Each plot corresponds to a different variable"
+#       )
+#     
+#     # Print the plot to PDF
+#     print(p)
+#   }
+#   
+#   # Close the PDF and text file
+#   dev.off()
+#   close(stats_file)
+# }
 
 # Function to evaluate Interaction and Polynomial Features
 analyze_interaction_polynomial_features <- function(data, target_var, feature_list) {

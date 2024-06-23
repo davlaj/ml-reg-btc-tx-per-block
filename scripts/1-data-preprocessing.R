@@ -114,21 +114,17 @@ outliers <- function(input_data, outliers_to_remove = TRUE) {
   
   data <- input_data
 
-  # TREATMENT (Trimming or capping)
+  # TREATMENT (Clipping/Truncation, Transformation, Imputation, Removal)
   
-  # Check if outliers removal is set to FALSE, then exit early
+  # Check if outliers_to_remove is set to FALSE, then exit early
   if (is.logical(outliers_to_remove) && !outliers_to_remove) {
-    # Attempt to delete the graph 3.1-without-outliers-boxplot if it exists
-    file_path <- "output/expl/TO-REUBICATE-without-outliers-boxplot.pdf"
-    if (file.exists(file_path)) {
-      file_removed <- file.remove(file_path)
-    }
     return(data)  # Return original data without any changes
   }
   
-  # Process based on type of outliers_to_remove
+  # If outliers_to_remove is set to TRUE
   if (is.logical(outliers_to_remove) && outliers_to_remove) {
     outliers_to_remove <- names(data)[sapply(data, is.numeric)]
+  # If outliers_to_remove is a list of variables
   } else if (is.character(outliers_to_remove)) {
     valid_columns <- outliers_to_remove %in% names(data)
     if (any(!valid_columns)) {
