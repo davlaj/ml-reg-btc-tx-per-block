@@ -31,6 +31,8 @@ test_set <- data[-training_rows[[1]], ]
 
 # PCA (have to scale/standardize before), Heatmaps, t-SNE plots, Multidimensional Scaling (MDS) plots
 
+# ADD LOADINGS MATRIX FOR PCA
+
 #############
 # 3.Scaling # Apply to continuous numeric non-categorical variables
 #############
