@@ -360,6 +360,7 @@ analyze_encoding_effects <- function(data) {
   txt_path <- paste0(output_dir, "/5.1-encoding_effects_analysis_details.txt")
   corr_matrix_rds_path <- paste0(output_dir, "/.5.1-encoding_effects_corr_matrix.rds")
   pca_summary_rds_path <- paste0(output_dir, "/.5.1-encoding_effects_pca_summary.rds")
+  pca_loadings_rds_path <- paste0(output_dir, "/.5.1-encoding_effects_pca_loadings.rds")
 
   cat("Starting analyze_encoding_effects function\n")
   cat("Output files set up\n")
@@ -410,15 +411,24 @@ analyze_encoding_effects <- function(data) {
   saveRDS(pca_summary, pca_summary_rds_path)
 
   cat("PCA summary saved to RDS\n")
-
+  
+  # Extract and save PCA loadings
+  pca_loadings <- pca_result$rotation
+  saveRDS(pca_loadings, pca_loadings_rds_path)
+  
+  writeLines("\nPCA Loadings:\n", txt_con)
+  capture.output(print(pca_loadings), file = txt_con, append = TRUE)
+  
+  cat("PCA loadings saved to RDS\n")
+  
   # Close the PDF and text file
   dev.off()
   close(txt_con)
-
+  
   cat("PDF and text connections closed\n")
   
   # Return paths to generated files
-  return(c(pdf_path, txt_path, corr_matrix_rds_path, pca_summary_rds_path))
+  return(c(pdf_path, txt_path, corr_matrix_rds_path, pca_summary_rds_path, pca_loadings_rds_path))
 }
 
 # Function to perform Final Data Integrity Check
@@ -437,6 +447,7 @@ generate_analysis_report <- function(file_paths) {
   # Extract file paths from the input character vector
   corr_matrix_rds_path <- file_paths[grepl("corr_matrix", file_paths)]
   pca_summary_rds_path <- file_paths[grepl("pca_summary", file_paths)]
+  pca_loadings_rds_path <- file_paths[grepl("pca_loadings", file_paths)]
   
   log_file <- paste0(output_dir, "/generate_analysis_report_debug.log")
   log_con <- file(log_file, open = "wt")
@@ -453,6 +464,7 @@ generate_analysis_report <- function(file_paths) {
   
   log(paste("Correlation matrix RDS file:", corr_matrix_rds_path))
   log(paste("PCA summary RDS file:", pca_summary_rds_path))
+  log(paste("PCA loadings RDS file:", pca_loadings_rds_path))
   
   # Check if the correlation matrix file exists
   if (!file.exists(corr_matrix_rds_path)) {
@@ -466,7 +478,13 @@ generate_analysis_report <- function(file_paths) {
     stop("Error: PCA summary file does not exist.")
   }
   
-  # Read the correlation matrix and PCA summary from RDS files
+  # Check if the PCA loadings file exists
+  if (!file.exists(pca_loadings_rds_path)) {
+    log("Error: PCA loadings file does not exist.")
+    stop("Error: PCA loadings file does not exist.")
+  }
+  
+  # Read the correlation matrix, PCA summary, and PCA loadings from RDS files
   tryCatch({
     corr_matrix <- readRDS(corr_matrix_rds_path)
     log("Correlation matrix successfully read.")
@@ -481,6 +499,14 @@ generate_analysis_report <- function(file_paths) {
   }, error = function(e) {
     log(paste("Error reading PCA summary:", e$message))
     stop("Failed to read the PCA summary: ", e$message)
+  })
+  
+  tryCatch({
+    pca_loadings <- readRDS(pca_loadings_rds_path)
+    log("PCA loadings successfully read.")
+  }, error = function(e) {
+    log(paste("Error reading PCA loadings:", e$message))
+    stop("Failed to read the PCA loadings: ", e$message)
   })
   
   # Open PDF output for the report
@@ -526,6 +552,17 @@ generate_analysis_report <- function(file_paths) {
   pca_summary_text <- capture.output(print(pca_summary))
   pca_summary_text <- paste(pca_summary_text, collapse = "\n")
   grid.text(pca_summary_text, x = 0.5, y = 0.5, just = "center", gp = gpar(fontsize = 10))
+  
+  log("Displaying PCA loadings.")
+  
+  # Display PCA loadings as text
+  grid.newpage()
+  pushViewport(viewport(layout = grid.layout(1, 1)))
+  grid.text("PCA Loadings", x = 0.5, y = 0.9, gp = gpar(fontsize = 20))
+  
+  pca_loadings_text <- capture.output(print(pca_loadings))
+  pca_loadings_text <- paste(pca_loadings_text, collapse = "\n")
+  grid.text(pca_loadings_text, x = 0.5, y = 0.5, just = "center", gp = gpar(fontsize = 10))
   
   log("Generating decision suggestions.")
   
