@@ -1,7 +1,7 @@
 Starting generate_analysis_report 
-Correlation matrix RDS file: output/exploratory-data-analysis/.5.1-encoding_effects_corr_matrix.rds 
-PCA summary RDS file: output/exploratory-data-analysis/.5.1-encoding_effects_pca_summary.rds 
-PCA loadings RDS file: output/exploratory-data-analysis/.5.1-encoding_effects_pca_loadings.rds 
+Correlation matrix RDS file: output/exploratory-data-analysis/.5.1-post_encoding_corr_matrix.rds 
+PCA summary RDS file: output/exploratory-data-analysis/.5.1-post_encoding_pca_summary.rds 
+PCA loadings RDS file: output/exploratory-data-analysis/.5.1-post_encoding_pca_loadings.rds 
 Correlation matrix successfully read. 
 PCA summary successfully read. 
 PCA loadings successfully read. 

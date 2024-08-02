@@ -354,15 +354,15 @@ analyze_interaction_polynomial_features <- function(data, target_var, feature_li
 }
 
 # Function to evaluate Encoding Effects
-analyze_encoding_effects <- function(data) {
+analyze_post_encoding <- function(data) {
   # Set up the output files
-  pdf_path <- paste0(output_dir, "/5.1-encoding_effects_analysis.pdf")
-  txt_path <- paste0(output_dir, "/5.1-encoding_effects_analysis_details.txt")
-  corr_matrix_rds_path <- paste0(output_dir, "/.5.1-encoding_effects_corr_matrix.rds")
-  pca_summary_rds_path <- paste0(output_dir, "/.5.1-encoding_effects_pca_summary.rds")
-  pca_loadings_rds_path <- paste0(output_dir, "/.5.1-encoding_effects_pca_loadings.rds")
+  pdf_path <- paste0(output_dir, "/5.1-post_encoding_analysis.pdf")
+  txt_path <- paste0(output_dir, "/5.1-post_encoding_analysis_details.txt")
+  corr_matrix_rds_path <- paste0(output_dir, "/.5.1-post_encoding_corr_matrix.rds")
+  pca_summary_rds_path <- paste0(output_dir, "/.5.1-post_encoding_pca_summary.rds")
+  pca_loadings_rds_path <- paste0(output_dir, "/.5.1-post_encoding_pca_loadings.rds")
 
-  cat("Starting analyze_encoding_effects function\n")
+  cat("Starting analyze_post_encoding function\n")
   cat("Output files set up\n")
 
   # Open a PDF device for plots
@@ -372,44 +372,77 @@ analyze_encoding_effects <- function(data) {
   txt_con <- file(txt_path, open = "wt")
 
   cat("PDF and text connections opened\n")
+  
+###################  
 
-  # Filter numeric data
-  data_numeric <- data %>% select(where(is.numeric))
+  # Filter data to scale - Apply to continuous numeric non-categorical variables, excluding the target variable
+  numeric_cols_to_scale <- names(data)[sapply(data, is.numeric) & 
+                                         !names(data) %in% c("TotalTransactions", "BlockNumber", "HourOfDay", "DayOfWeek", "IsWeekend")]
 
   # Scale the data
-  data_scaled <- scale(data_numeric)
+  data_scaled <- data %>%
+    mutate(across(all_of(numeric_cols_to_scale), scale))
 
   cat("Data scaled\n")
+  
+#... corr matrix will be applied to scaled data... so it will not be comparable to the corr matrix at the beginning
+# should we have "data" as input for the corr matrix, i.e. wihtout any scaling, and also another corr matrix only with scaled variables?
+  
+  # Add Boxplot of scaled data to PDF
+  boxplot_plot <- data_scaled %>%
+    select(all_of(numeric_cols_to_scale)) %>%  # Select only scaled numeric columns
+    pivot_longer(cols = everything(), names_to = "Variable", values_to = "Value") %>%  # Reshape data
+    ggplot(aes(x = "", y = Value)) +  # Setup axes
+    geom_boxplot() +  # Create boxplots
+    facet_wrap(~ Variable, scales = "free_y") +  # Separate plot for each variable with free y scale
+    theme(axis.text.x = element_blank(), axis.ticks.x = element_blank()) +  # Remove x-axis elements
+    labs(y = "Values", title = "Separate Boxplot for Each Non-Categorical Numeric Variable after Scaling")
+  
+  print(boxplot_plot)
+  
+  cat("Boxplot of scaled data added to PDF\n")
+  
+  # Print summary of scaled data to the text file
+  writeLines("\nSummary of Scaled Data:\n", txt_con)
+  capture.output(summary(data_scaled), file = txt_con, append = TRUE)
+  
+  cat("Summary of scaled data added to text file\n")
+  
+#############  
 
+  # Ensure only numeric columns are used for correlation matrix
+  data_scaled_numeric <- data_scaled %>%
+    select(where(is.numeric))
+  
   # Compute the correlation matrix
-  corr_matrix <- cor(data_scaled, use = "pairwise.complete.obs")
-
+  corr_matrix <- cor(data_scaled_numeric, use = "pairwise.complete.obs")
+  
   cat("Correlation matrix computed\n")
-
+  
   # Print the correlation matrix to the text file and save as RDS
-  writeLines("Correlation Matrix:\n", txt_con)
+  writeLines("\nCorrelation Matrix:\n", txt_con)
   capture.output(print(corr_matrix), file = txt_con, append = TRUE)
   saveRDS(corr_matrix, corr_matrix_rds_path)
-
+  
   cat("Correlation matrix saved to RDS\n")
-
+  
   # Plotting the correlation matrix
   corrplot(corr_matrix, method = "circle", type = "lower", order = "hclust",
            tl.col = "black", tl.srt = 45)
-
+  
   # Perform PCA and plot the results
-  pca_result <- prcomp(data_scaled, scale. = TRUE)
+  pca_result <- prcomp(data_scaled_numeric, scale. = TRUE)
   plot(pca_result, type = "lines", main = "PCA Scree Plot")
   biplot(pca_result, main = "PCA Biplot", cex = 0.7)
-
+  
   cat("PCA performed and plotted\n")
-
+  
   # Print PCA summary to the text file and save as RDS
   writeLines("\nPCA Summary:\n", txt_con)
   pca_summary <- summary(pca_result)
   capture.output(pca_summary, file = txt_con, append = TRUE)
   saveRDS(pca_summary, pca_summary_rds_path)
-
+  
   cat("PCA summary saved to RDS\n")
   
   # Extract and save PCA loadings
@@ -457,10 +490,6 @@ generate_analysis_report <- function(file_paths) {
   }
   
   log("Starting generate_analysis_report")
-  
-  # # Paths to the input files
-  # corr_matrix_rds_path <- paste0(output_dir, "/.5.1-encoding_effects_corr_matrix.rds")
-  # pca_summary_rds_path <- paste0(output_dir, "/.5.1-encoding_effects_pca_summary.rds")
   
   log(paste("Correlation matrix RDS file:", corr_matrix_rds_path))
   log(paste("PCA summary RDS file:", pca_summary_rds_path))

@@ -26,15 +26,16 @@ list(
      
      # 5.Encoding # Apply to categorical variables
      tar_target(dataEncoded, encoding(dataFullFeatureEngerineered)),
-     tar_target(analyzeEncodingEffects, analyze_encoding_effects(dataEncoded), format = "file"),
+     tar_target(analyzePostEncoding, analyze_post_encoding(dataEncoded), format = "file"),
      
      # 6.Integrity Check
      tar_target(dataIntegrityCheck, integrity_check(dataEncoded)),
      tar_target(analyzeIntegrityCheck, analyze_integrity_check(dataIntegrityCheck)),
-     
+
      # Analysis Report
-     tar_target(dataPreprocessedReport, generate_analysis_report(analyzeEncodingEffects), format = "file")
+     tar_target(dataPreprocessedReport, generate_analysis_report(analyzePostEncoding), format = "file"),
   
+     
      #tar_target(dataSplitted, splitting(dataPreprocessed), seed = 123)
      )
 

@@ -212,7 +212,7 @@ encoding <- function(input_data) {
   return(data) 
 }
 #data_encoded <- encoding(data_full_feature_engineered) 
-#analyze_encoding_effects(data_encoded)
+#analyze_post_encoding(data_encoded)
 
 # 6.Data Integrity Checks 
 integrity_check <- function(input_data) {

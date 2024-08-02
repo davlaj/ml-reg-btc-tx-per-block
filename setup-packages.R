@@ -20,4 +20,6 @@ pacman::p_load(httr,
                forecast,
                reshape2,
                grid,
-               ggbiplot)
+               ggbiplot,
+               sgboost,
+               e1071)
