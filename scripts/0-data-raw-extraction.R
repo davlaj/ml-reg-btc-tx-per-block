@@ -20,8 +20,8 @@ make_rpc_call <- function(url, method, params = list(), rpc_username, rpc_passwo
 
 # Main function to extract data
 extract_data <- function() {
-  rpc_username <- "bitcoin_user"  
-  rpc_password <- "MdkjV34UfFN1kA87y43dDU54nvP6Qie4DM"  
+  rpc_username <- Sys.getenv("BTC_RPC_USER")
+  rpc_password <- Sys.getenv("BTC_RPC_PASS")
   rpc_host <- "127.0.0.1"
   rpc_port <- "8332"
   

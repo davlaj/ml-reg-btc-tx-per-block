@@ -1,6 +1,20 @@
-.Rproj.user
+# Fichiers et dossiers R temporaires
+.Rproj.user/
 .Rhistory
 .RData
 .Ruserdata
-_targets/
+
+
+# Variables d'environnement sensibles
+.Renviron
+
+
+# Fichiers de données générés localement
 /output/exploratory-data-analysis/*.rds
+
+
+# Cibles du pipeline {targets}
+_targets/
+
+# macOS
+.DS_Store

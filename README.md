@@ -57,6 +57,18 @@ Once the project is set up:
 source("setup-packages.R")
 ```
 
+#### Setting up environment variables
+
+To securely connect to your Bitcoin node, create a file named `.Renviron` in the project root directory and add:
+
+```
+BTC_RPC_USER=your_rpc_username
+BTC_RPC_PASS=your_rpc_password
+```
+
+This file is automatically read by R when you open the project.
+Make sure **not to commit this file** by keeping `.Renviron` listed in your `.gitignore`.
+
 ## Scripts Overview
 
 - **0-data-raw-extraction.R**: Extract raw data from the Bitcoin node.
@@ -102,3 +114,14 @@ This project is licensed under the MIT License.
 
 ## Contact
 For any questions or issues, please open an issue in the GitHub repository.
+
+## Roadmap / In progress
+
+This project is a work in progress. Upcoming enhancements may include:
+
+- Adding advanced modeling techniques (e.g., GAMs, hyperparameter tuning)
+- Improving output visualizations and documentation
+- Building an interactive dashboard for exploration
+- Refining pipeline automation and reproducibility
+
+The current version already demonstrates a complete and functional pipeline from data extraction to model evaluation.

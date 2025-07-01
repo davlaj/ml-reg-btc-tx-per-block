@@ -22,4 +22,5 @@ pacman::p_load(httr,
                grid,
                ggbiplot,
                sgboost,
-               e1071)
+               e1071,
+               GWalkR)
