@@ -4,6 +4,9 @@
 .RData
 .Ruserdata
 
+# IDE config folder
+.idea/
+
 
 # Variables d'environnement sensibles
 .Renviron
